@@ -16,7 +16,7 @@
 	<slot />
 </main>
 
-<style>
+<!-- <style>
 	nav {
 		display: flex;
 		align-items: center;
@@ -90,4 +90,4 @@
 	:global(h3) {
 		margin-block-start: 4rem;
 	}
-</style>
+</style> -->
