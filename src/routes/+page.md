@@ -31,7 +31,7 @@ Once you've added `microform` to your project, use it as shown below, in your vi
 
 ```ts
 <script>
-import uForm from "microform";
+import uForm from "@steveesamson/microform";
 // default form data, probably passed as props
 export let defaultData:any = {};
 

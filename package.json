@@ -1,6 +1,6 @@
 {
 	"name": "@steveesamson/microform",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -42,6 +42,7 @@
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"publint": "^0.1.9",
+		"shiki": "^0.14.7",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
 		"tslib": "^2.4.1",
@@ -57,11 +58,10 @@
 		"svelte",
 		"sveltejs",
 		"svelte-form",
+		"svelte-microform",
 		"form",
 		"sveltekit",
-		"svelte-kit"
-	],
-	"dependencies": {
-		"shiki": "^0.14.7"
-	}
+		"svelte-kit",
+		"sveltekit-microform"
+	]
 }

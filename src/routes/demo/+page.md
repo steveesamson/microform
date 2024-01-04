@@ -17,8 +17,7 @@
 
 ```ts
 <script>
-	import uForm from '$lib/index.js';
-	import type { Params } from '$lib/types.js';
+	import uForm from "@steveesamson/microform";
 
 	const { form, values, valid, errors, submit, onsubmit, reset } = uForm({
 		data: {
@@ -34,18 +33,18 @@
 		}
 	});
 
-	const save = (data: Params) => {
+	const save = (data: unknown) => {
 		console.log({ data });
 		alert(JSON.stringify(data, null, 2));
 	};
 
-	const items: Params[] = [
+	const items: any[] = [
 		{ label: 'Coffee', value: 'coffee' },
 		{ label: 'Tea', value: 'tea' },
 		{ label: 'Milk', value: 'milk' }
 	];
 
-	const foods: Params[] = [
+	const foods: any[] = [
 		{ label: 'Jollof rice', value: 'jrice' },
 		{ label: 'Pando', value: 'pando' },
 		{ label: 'Fried beans', value: 'fbeans' },
