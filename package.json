@@ -1,6 +1,6 @@
 {
-	"name": "tiny",
-	"version": "0.0.1",
+	"name": "@steveesamson/microform",
+	"version": "0.0.2",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -38,6 +38,7 @@
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
+		"mdsvex": "^0.11.0",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"publint": "^0.1.9",
@@ -49,5 +50,18 @@
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"type": "module"
+	"type": "module",
+	"keywords": [
+		"microform",
+		"@steveesamson/microform",
+		"svelte",
+		"sveltejs",
+		"svelte-form",
+		"form",
+		"sveltekit",
+		"svelte-kit"
+	],
+	"dependencies": {
+		"shiki": "^0.14.7"
+	}
 }

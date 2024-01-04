@@ -1,3 +1,10 @@
+<svelte:head>
+
+<title>Microform Home</title>
+<meta property="og:type" content="microform home" />
+<meta property="og:title" content="Microform home" />
+</svelte:head>
+
 # microform
 
 `microform` is a tiny library for managing forms in `svelte/sveltekit`.
@@ -20,11 +27,11 @@ yarn add @steveesamson/microform
 
 Once you've added `microform` to your project, use it as shown below, in your view(`.svelte` files):
 
-### In the view Script
+## In the view `script`
 
 ```ts
-<script lang='ts'>
-import uForm from "@steveesamson/microform";
+<script>
+import uForm from "microform";
 // default form data, probably passed as props
 export let defaultData:any = {};
 
@@ -57,7 +64,7 @@ On the instantiation of `microform`, we have access to:
 - `reset`, a function to reset form
 - `onsubmit`, a function to handle form submission.
 
-### In the view Html
+## In the view `html`
 
 ```html
     <form use:submit={onSubmit}>
@@ -157,7 +164,13 @@ While the above example uses the `submit` action of `microform`, form could also
 <form>
 	<label for="password">
 		Password:
-		<input type="text" name="password" id="password" use:form data-validations="required" />
+		<input
+			type="text"
+			name="password"
+			id="password"
+			data-validations="required|min-length:6"
+			use:form
+		/>
 		{#if $errors.password}
 		<small>{$errors.password}</small>
 		{/if}
@@ -180,7 +193,7 @@ While the above example uses the `submit` action of `microform`, form could also
 </form>
 ```
 
-## microform Features
+## Features
 
 `microform` performs its magic by relying the `form` action. The `form` action can optionally accept the following:
 
@@ -221,7 +234,7 @@ You need not bind the `values` to your fields except when there is a definite ne
 />
 ```
 
-### 1. Validations
+## 1. Validations
 
 Uses both inline `data-validations` on field and `validations` props on `form` action. For instance, the following are perfectly identical:
 
@@ -242,7 +255,7 @@ Uses both inline `data-validations` on field and `validations` props on `form` a
     }}/>
 ```
 
-### 2. Validation Event
+## 2. Validation Event
 
 Validation event can be changed/specified on a per-field basis. For instance, in our example, the global `validateEvent` was set to `blur` but we changed it on the select field to `change` like so:
 
@@ -260,7 +273,7 @@ Validation event can be changed/specified on a per-field basis. For instance, in
 </select>
 ```
 
-### 3. Supports for contenteditable
+## 3. Supports for contenteditable
 
 `microform` supports `contenteditable` out-of-box:
 
@@ -284,7 +297,7 @@ Validation event can be changed/specified on a per-field basis. For instance, in
 </form>
 ```
 
-### 4. Provides usable default validations
+## 4. Default validations
 
 `microform` provides a set of usable validations out-of-box. The following is a list of provided validations:
 
@@ -305,7 +318,9 @@ Validation event can be changed/specified on a per-field basis. For instance, in
 
 Every validation listed above also comes with a very good default error message.
 
-Finally, the validations can be combined to form a complex graph of validations based on use cases by separating each validation rule with a `pipe`, `|`. For instance, a required field that also should be an email field could be validated thus:
+## 5. Combining validation rules
+
+Finally, validations can be combined to form a complex graph of validations based on use cases by separating each validation rule with a `pipe`, `|`. For instance, a required field that also should be an email field could be validated thus:
 
 ```html
 <input

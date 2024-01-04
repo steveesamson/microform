@@ -1,13 +1,28 @@
 // import adapter from '@sveltejs/adapter-auto';
 import adapter from '@sveltejs/adapter-static';
-
+import { mdsvex, escapeSvelte } from 'mdsvex'
+import shiki from 'shiki'
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 const dev = process.env.NODE_ENV === "development";
+
+/** @type {import('mdsvex').MdsvexOptions} */
+const mdsvexOptions = {
+	extensions: ['.md'],
+	highlight: {
+		highlighter: async (code, lang = 'text') => {
+			const highlighter = await shiki.getHighlighter({ theme: 'poimandres' })
+			// const highlighter = await shiki.getHighlighter({ theme: 'one-dark-pro' })
+			const html = escapeSvelte(highlighter.codeToHtml(code, { lang }))
+			return `{@html \`${html}\` }`
+		}
+	},
+}
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
+	extensions: ['.svelte', '.md'],
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
-	preprocess: vitePreprocess(),
+	preprocess: [vitePreprocess(), mdsvex(mdsvexOptions)],
 
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
@@ -24,7 +39,8 @@ const config = {
 			}),
 		paths: {
 			// change below to your repo name
-			base: dev ? "" : "/microform",
+			// base: dev ? "" : "/microform",
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		},
 
 	}

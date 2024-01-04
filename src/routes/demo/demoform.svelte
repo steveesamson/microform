@@ -4,21 +4,21 @@
 
 	const { form, values, valid, errors, submit, onsubmit, reset } = uForm({
 		data: {
-			email: 'kevwe.samson@gmail.com',
+			email: 'stevee.samson@gmail.com',
 			dob: '2023-02-06',
 			supper_time: '13:35',
 			favfoods: 'pando,jrice',
 			beverage: 'coffee', //'coffee,milk'
 			comment: 'I shall.',
 			story: '<p>It is a story</p>',
-			article: '<p>It is sure as heaven</p>',
 			fullname: 'Steve Samson',
-			password: 'GHST2444SNSGS'
+			password: 'some-top-dark-secret'
 		}
 	});
 
 	const save = (data: Params) => {
 		console.log({ data });
+		alert(JSON.stringify(data, null, 2));
 	};
 
 	const items: Params[] = [
@@ -37,9 +37,8 @@
 	];
 </script>
 
-<form id="test-form">
-	<h1>Welcome microform</h1>
-	<p>Microform demo</p>
+<form id="test-form" use:submit={save}>
+	<h1>Microform demo</h1>
 
 	<div>
 		<label for="fullname">
@@ -149,14 +148,8 @@
 			{/if}
 		</label>
 		<section>
-			<button type="button" class="button inverted primary">
-				<span>Inverted</span>
-			</button>
-			<button type="button" disabled={!$valid} class="button primary" on:click={onsubmit(save)}>
-				Submit
-			</button>
-			<!-- <button type="submit" disabled={!$valid}> Submit </button> -->
-			<button type="button" on:click={reset} class="button danger inverted"> Danger </button>
+			<button type="submit" disabled={!$valid}>Submit</button>
+			<button type="button" on:click={reset}> Reset </button>
 		</section>
 	</div>
 </form>
@@ -167,7 +160,7 @@
 		margin: 1rem;
 	}
 	form {
-		width: min(100%, 20em);
+		width: min(100%, 25em);
 		margin-inline: auto;
 		background-color: #efefef;
 		border: 1px solid #ddd;
@@ -186,8 +179,7 @@
 		gap: 0.5rem;
 		margin-block-end: 1rem;
 	}
-	h1,
-	p {
+	h1 {
 		text-align: center;
 	}
 
@@ -200,5 +192,24 @@
 		border: 1px solid #ddd;
 		color: #333;
 		background-color: #fff;
+	}
+
+	button {
+		font-size: 1rem;
+		padding: 0.25em 1em;
+		border: 1px solid #ddd;
+		background-color: #efefef;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+
+	button[type='submit'] {
+		color: tomato;
+		border-color: tomato;
+	}
+
+	button:disabled {
+		filter: brightness(85%);
+		cursor: not-allowed;
 	}
 </style>
