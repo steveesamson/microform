@@ -16,6 +16,8 @@ or
 yarn add @steveesamson/microform
 ```
 
+[demo and docs](https://steveesamson.github.io/microform)
+
 ## Usage
 
 Once you've added `microform` to your project, use it as shown below, in your view(`.svelte` files):

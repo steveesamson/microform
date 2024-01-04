@@ -1,6 +1,6 @@
 {
 	"name": "@steveesamson/microform",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -12,12 +12,18 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/steveesamson/microform.git"
+	},
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
 		}
 	},
+	"author": "Steve S. Samson <stevee.samson@gmail.com> (http://github.com/steveesamson)",
+	"homepage": "https://steveesamson.github.io/microform",
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",
@@ -54,6 +60,7 @@
 	"type": "module",
 	"keywords": [
 		"microform",
+		"microform-svelte",
 		"@steveesamson/microform",
 		"svelte",
 		"sveltejs",
