@@ -1,6 +1,8 @@
+export * from "./types.js";
 import { writable, derived, get } from 'svelte/store';
 import { formAction } from './form-action.js';
-import type { FormErrors, FormSubmit, FormValues, Params, UseFormProps, UseFormReturn } from './types.js';
+import type { FormErrors, FormSubmit, FormValues, UseFormProps, UseFormReturn } from './types.js';
+import type { Params } from './internal.js';
 
 const useForm = (props?: UseFormProps): UseFormReturn => {
     // form default values

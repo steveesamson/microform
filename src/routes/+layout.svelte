@@ -4,25 +4,33 @@
 	$: path = $page.route.id;
 </script>
 
-<nav>
-	<div>
-		<strong>µform</strong>
-		<em>microform</em>
-	</div>
-	<a href={`${base}/`} title="Home" class:active={path === '/'}>Home</a>
-	<a href={`${base}/demo`} title="Demo" class:active={path === '/demo'}>Demo</a>
-</nav>
+<header>
+	<nav>
+		<div>
+			<strong>µform</strong>
+			<em>microform</em>
+		</div>
+		<a href={`${base}/`} title="Home" class:active={path === '/'}>Home</a>
+		<a href={`${base}/demo`} title="Microform Demo" class:active={path === '/demo'}
+			>Microform Demo</a
+		>
+	</nav>
+</header>
 <main>
 	<slot />
 </main>
 
 <style>
+	header {
+		background-color: #adbbc8;
+		/* background-color: #b5bccb; */
+	}
 	nav {
 		display: flex;
 		align-items: center;
 		padding: 0.5rem 3rem;
-		background-color: #adbbc8;
 	}
+
 	nav a {
 		color: #142f49;
 		text-decoration: none;
@@ -51,7 +59,6 @@
 		font-style: normal;
 	}
 	:global(body) {
-		background-color: #cbced5;
 		text-align: center;
 		padding: 0;
 		margin: 0;
@@ -66,12 +73,14 @@
 		tab-size: 2;
 		overflow-x: auto;
 	}
-
+	nav,
 	main {
-		padding-block: 2rem;
 		margin-inline: auto;
 		width: min(100%, 50em);
 		text-align: left;
+	}
+	main {
+		padding-block: 2rem;
 	}
 	:global(p),
 	:global(li) {
@@ -81,7 +90,7 @@
 	:global(p > code),
 	:global(li > code) {
 		font-weight: 600;
-		background-color: #b5bccb;
+		background-color: #cbd4dc;
 		padding: 0.2rem 0.25rem;
 		border-radius: 5px;
 	}

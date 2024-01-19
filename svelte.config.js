@@ -3,7 +3,6 @@ import adapter from '@sveltejs/adapter-static';
 import { mdsvex, escapeSvelte } from 'mdsvex'
 import shiki from 'shiki'
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-const dev = process.env.NODE_ENV === "development";
 
 /** @type {import('mdsvex').MdsvexOptions} */
 const mdsvexOptions = {
@@ -39,7 +38,6 @@ const config = {
 			}),
 		paths: {
 			// change below to your repo name
-			// base: dev ? "" : "/microform",
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		},
 
