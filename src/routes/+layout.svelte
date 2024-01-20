@@ -58,7 +58,6 @@
 		font-style: normal;
 	}
 	:global(body) {
-		/* background-color: #cbced5; */
 		text-align: center;
 		padding: 0;
 		margin: 0;

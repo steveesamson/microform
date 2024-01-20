@@ -5,23 +5,22 @@
 
 	<meta charset="utf-8" />
 	<link rel="icon" href="./favicon.png" />
-	<link rel="stylesheet" href="/style.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	
-		<link href="./_app/immutable/assets/0.LzVx7tvL.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.jAvOfOjU.js">
+		<link href="./_app/immutable/assets/0.PvWAZk7R.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.lO2t9dDa.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.yEHThLPp.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.DwP-FVLe.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.w346_sJM.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/index.z0vEgkXQ.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.yP0nPTuQ.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.bFD48rRT.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/index.56jHPhMF.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/0.x6LDOhRT.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/stores.eWqcotu5.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/0.5TsPKqv-.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/stores.KgamH0d-.js">
 		<link rel="modulepreload" href="./_app/immutable/nodes/2.DOaRAVLH.js"><title>Microform Home</title><!-- HEAD_svelte-1kcvjsk_START --><meta property="og:type" content="microform home"><meta property="og:title" content="Microform home"><!-- HEAD_svelte-1kcvjsk_END -->
 </head>
 
 <body data-sveltekit-preload-data="hover">
-	<div>  <nav class="svelte-1duufpa"><div data-svelte-h="svelte-1s4fa8s"><strong class="svelte-1duufpa">µform</strong> <em class="svelte-1duufpa">microform</em></div> <a href="./" title="Home" class="svelte-1duufpa active" data-svelte-h="svelte-h49wex">Home</a> <a href="./demo" title="Demo" class="svelte-1duufpa" data-svelte-h="svelte-14t8obb">Demo</a></nav> <main class="svelte-1duufpa"> <h1 data-svelte-h="svelte-3qysl0">microform</h1> <p data-svelte-h="svelte-trxdis"><code>microform</code> is a tiny library for managing forms in <code>svelte/sveltekit</code>.</p> <h2 data-svelte-h="svelte-136tnhu">Installation</h2> <!-- HTML_TAG_START --><pre class="shiki poimandres" style="background-color: #1b1e28" tabindex="0"><code><span class="line"><span style="color: #767C9DB0; font-style: italic"># In your project directory</span></span>
+	<div>  <header class="svelte-1t7obh9"><nav class="svelte-1t7obh9"><div data-svelte-h="svelte-imu4vd"><strong class="svelte-1t7obh9">µform</strong> <em class="svelte-1t7obh9">microform</em></div> <a href="./" title="Home" class="svelte-1t7obh9 active" data-svelte-h="svelte-h49wex">Home</a> <a href="./demo" title="Microform Demo" class="svelte-1t7obh9" data-svelte-h="svelte-1gub4lk">Microform Demo</a></nav></header> <main class="svelte-1t7obh9"> <h1 data-svelte-h="svelte-3qysl0">microform</h1> <p data-svelte-h="svelte-trxdis"><code>microform</code> is a tiny library for managing forms in <code>svelte/sveltekit</code>.</p> <h2 data-svelte-h="svelte-136tnhu">Installation</h2> <!-- HTML_TAG_START --><pre class="shiki poimandres" style="background-color: #1b1e28" tabindex="0"><code><span class="line"><span style="color: #767C9DB0; font-style: italic"># In your project directory</span></span>
 <span class="line"><span style="color: #91B4D5">npm</span><span style="color: #A6ACCD"> </span><span style="color: #ADD7FF">install</span><span style="color: #A6ACCD"> </span><span style="color: #ADD7FF">@steveesamson/microform</span></span></code></pre><!-- HTML_TAG_END --> <p data-svelte-h="svelte-93sdsf">or</p> <!-- HTML_TAG_START --><pre class="shiki poimandres" style="background-color: #1b1e28" tabindex="0"><code><span class="line"><span style="color: #767C9DB0; font-style: italic"># In your project directory</span></span>
 <span class="line"><span style="color: #91B4D5">yarn</span><span style="color: #A6ACCD"> </span><span style="color: #ADD7FF">add</span><span style="color: #A6ACCD"> </span><span style="color: #ADD7FF">@steveesamson/microform</span></span></code></pre><!-- HTML_TAG_END --> <h2 data-svelte-h="svelte-dnbfhr">Usage</h2> <p data-svelte-h="svelte-xbb6q5">Once you’ve added <code>microform</code> to your project, use it as shown below, in your view(<code>.svelte</code> files):</p> <h2 data-svelte-h="svelte-yb4z4t">In the view <code>script</code></h2> <!-- HTML_TAG_START --><pre class="shiki poimandres" style="background-color: #1b1e28" tabindex="0"><code><span class="line"><span style="color: #A6ACCD">&lt;</span><span style="color: #A6ACCDC0">script</span><span style="color: #A6ACCD">&gt;</span></span>
 <span class="line"><span style="color: #5DE4C7">import </span><span style="color: #ADD7FF">uForm</span><span style="color: #5DE4C7"> </span><span style="color: #A6ACCD">from</span><span style="color: #5DE4C7"> </span><span style="color: #A6ACCD">&quot;</span><span style="color: #5DE4C7">@steveesamson/microform</span><span style="color: #A6ACCD">&quot;</span><span style="color: #A6ACCD">;</span></span>
@@ -237,7 +236,7 @@
 			
 			<script>
 				{
-					__sveltekit_6iivo0 = {
+					__sveltekit_5nh78b = {
 						base: new URL(".", location).pathname.slice(0, -1),
 						env: null
 					};
@@ -247,8 +246,8 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.jAvOfOjU.js"),
-						import("./_app/immutable/entry/app.yP0nPTuQ.js")
+						import("./_app/immutable/entry/start.lO2t9dDa.js"),
+						import("./_app/immutable/entry/app.bFD48rRT.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
