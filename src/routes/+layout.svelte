@@ -30,7 +30,6 @@
 		align-items: center;
 		padding: 0.5rem 3rem;
 	}
-
 	nav a {
 		color: #142f49;
 		text-decoration: none;
@@ -59,6 +58,7 @@
 		font-style: normal;
 	}
 	:global(body) {
+		/* background-color: #cbced5; */
 		text-align: center;
 		padding: 0;
 		margin: 0;
@@ -90,6 +90,7 @@
 	:global(p > code),
 	:global(li > code) {
 		font-weight: 600;
+		/* background-color: #b5bccb; */
 		background-color: #cbd4dc;
 		padding: 0.2rem 0.25rem;
 		border-radius: 5px;
