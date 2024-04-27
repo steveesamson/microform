@@ -1,6 +1,6 @@
 {
 	"name": "@steveesamson/microform",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"scripts": {
 		"dev": "vite dev",
 		"postbuild": "touch ./docs/.nojekyll",
@@ -21,8 +21,7 @@
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index.js",
-			"default": "./dist/index.js"
+			"svelte": "./dist/index.js"
 		}
 	},
 	"author": "Steve S. Samson <stevee.samson@gmail.com> (http://github.com/steveesamson)",
