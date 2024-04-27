@@ -9,7 +9,8 @@ import type {
     FormValues,
     InputType,
     FormReturn,
-    Params
+    Params,
+    FormAction
 } from "./types.js";
 
 
@@ -30,7 +31,7 @@ const checkFormFitness = (values: FormValues, unfits: Writable<Params>, validati
     }
 }
 
-export const formAction = (values: FormValues, errors: FormErrors, unfits: Writable<Params>, isdirty: Writable<boolean>, options: FormOptions, validationMap: Params) => {
+export const formAction = (values: FormValues, errors: FormErrors, unfits: Writable<Params>, isdirty: Writable<boolean>, options: FormOptions, validationMap: Params): FormAction => {
     const validate = useValidator(errors, values);
 
     return (node: HTMLElement, eventProps?: ActionOptions): FormReturn => {

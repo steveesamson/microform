@@ -14,6 +14,7 @@ export interface ValidateArgs {
 export type FormReturn = {
 	destroy: () => void
 };
+
 export type ValidateEvent = 'input' | 'change' | 'keyup' | 'blur';
 
 export type FormValues = Writable<Params>;
@@ -31,7 +32,7 @@ export type ActionOptions = {
 export type FormAction = (
 	node: HTMLElement,
 	eventProps?: ActionOptions
-) => { destroy: () => void }
+) => FormReturn
 
 export type FormSubmitEvent = SubmitEvent & {
 	currentTarget: EventTarget & HTMLFormElement;
