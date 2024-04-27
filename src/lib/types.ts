@@ -39,20 +39,19 @@ export type FormSubmitEvent = SubmitEvent & {
 }
 export type FormSubmit = (_data: Params) => void;
 
-
 export type FormOptions = {
 	validateEvent: ValidateEvent;
 }
 
-export type UseFormProps = {
+export type MicroFormProps = {
 	data?: Params;
 	options?: FormOptions
 }
 export type FormSanity = Readable<boolean>;
-export type UseFormReturn = {
+export type MicroFormReturn = {
 	values: FormValues;
 	errors: FormErrors;
-	form: (node: HTMLElement, eventProps?: ActionOptions) => void;
+	form: (node: HTMLElement, eventProps?: ActionOptions) => FormReturn;
 	valid: FormSanity;
 	submit: (formNode: HTMLFormElement, handler: FormSubmit) => void;
 	onsubmit: (handler: FormSubmit) => (e: Event) => Promise<void>;

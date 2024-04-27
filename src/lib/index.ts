@@ -1,10 +1,10 @@
 export * from "./types.js";
 import { writable, derived, get } from 'svelte/store';
 import { formAction } from './form-action.js';
-import type { FormErrors, FormSubmit, FormValues, UseFormProps, UseFormReturn } from './types.js';
+import type { FormErrors, FormSubmit, FormValues, MicroFormProps, MicroFormReturn } from './types.js';
 import type { Params } from './internal.js';
 
-const useForm = (props?: UseFormProps): UseFormReturn => {
+const useForm = (props?: MicroFormProps): MicroFormReturn => {
     // form default values
     const data = props?.data || {};
     // form values
