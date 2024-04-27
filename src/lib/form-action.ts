@@ -8,6 +8,7 @@ import type {
     FormOptions,
     FormValues,
     InputType,
+    FormReturn,
     Params
 } from "./types.js";
 
@@ -32,7 +33,7 @@ const checkFormFitness = (values: FormValues, unfits: Writable<Params>, validati
 export const formAction = (values: FormValues, errors: FormErrors, unfits: Writable<Params>, isdirty: Writable<boolean>, options: FormOptions, validationMap: Params) => {
     const validate = useValidator(errors, values);
 
-    return (node: HTMLElement, eventProps?: ActionOptions) => {
+    return (node: HTMLElement, eventProps?: ActionOptions): FormReturn => {
         const nodeName = isField(node) ? node.name : ''
         const { name: dsname = nodeName, validations: dsvalidations = '' } = node.dataset || {};
         const { name = dsname, validations = dsvalidations, validateEvent = options.validateEvent, html = false } = eventProps || {};

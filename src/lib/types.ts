@@ -1,6 +1,6 @@
 import { type Writable, type Readable } from "svelte/store";
 import type { Params } from "./internal.js";
-
+export type { Params };
 export type FieldTypes = "Standard" | "Popover" | "Checkable";
 export type InputTypes = 'text' | 'number' | 'color' | 'time' | 'date' | 'range' | 'email' | 'hidden' | 'password' | 'tel' | 'url';
 export type FieldType = HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement;
@@ -11,7 +11,9 @@ export interface ValidateArgs {
 	validations: string;
 	node?: HTMLElement;
 }
-
+export type FormReturn = {
+	destroy: () => void
+};
 export type ValidateEvent = 'input' | 'change' | 'keyup' | 'blur';
 
 export type FormValues = Writable<Params>;
