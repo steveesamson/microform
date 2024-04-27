@@ -1,6 +1,6 @@
 {
 	"name": "@steveesamson/microform",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"scripts": {
 		"dev": "vite dev",
 		"postbuild": "touch ./docs/.nojekyll",
@@ -59,7 +59,6 @@
 		"vite": "^5.0.3"
 	},
 	"default": "./dist/index.js",
-	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"keywords": [
