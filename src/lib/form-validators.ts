@@ -1,5 +1,5 @@
-import { get } from "svelte/store";
-import type { FormErrors, FormValues, Params, ValidateArgs } from "./types.js";
+import { get, type Writable } from "svelte/store";
+import type {  Params, ValidateArgs } from "./types.js";
 import { makeName } from "./utils.js";
 
 
@@ -68,7 +68,7 @@ const checkFileSize = (node: HTMLInputElement | undefined, maxFileSizeInMB: numb
     }
     return "";
 }
-export const useValidator = (errors: FormErrors, values: FormValues) => {
+export const useValidator = (errors: Writable<Params>, values: Writable<Params>) => {
     const setError = (name: string, error: string) => {
         errors.update((prev: Params) => {
             return { ...prev, [name]: error };

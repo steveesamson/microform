@@ -1,8 +1,8 @@
 <script lang="ts">
-	import uForm from '$lib/index.js';
+	import uForm from '$lib/index.svelte.js';
 	import type { Params } from '$lib/types.js';
 
-	const { form, values, valid, errors, submit, onsubmit, reset } = uForm({
+	let { form, values, sanity, errors, submit, onsubmit, reset } = uForm({
 		data: {
 			email: 'stevee.samson@gmail.com',
 			dob: '2023-02-06',
@@ -17,7 +17,6 @@
 	});
 
 	const save = (data: Params) => {
-		console.log({ data });
 		alert(JSON.stringify(data, null, 2));
 	};
 
@@ -44,29 +43,29 @@
 		<label for="fullname">
 			Name:
 			<input type="text" name="fullname" id="fullname" use:form data-validations="required" />
-			{#if $errors.fullname}
-				<small>{$errors.fullname}</small>
+			{#if errors.fullname}
+				<small>{errors.fullname}</small>
 			{/if}
 		</label>
 		<label for="dob">
 			DOB:
-			<input type="date" name="dob" id="supper_time" use:form data-validations="required" />
-			{#if $errors.dob}
-				<small>{$errors.dob}</small>
+			<input type="date" name="dob" id="dob" use:form data-validations="required" />
+			{#if errors.dob}
+				<small>{errors.dob}</small>
 			{/if}
 		</label>
 		<label for="supper_time">
 			Supper time:
 			<input type="time" name="supper_time" id="supper_time" use:form data-validations="required" />
-			{#if $errors.supper_time}
-				<small>{$errors.supper_time}</small>
+			{#if errors.supper_time}
+				<small>{errors.supper_time}</small>
 			{/if}
 		</label>
 		<label for="password">
 			Password:
 			<input type="password" name="password" id="password" use:form data-validations="required" />
-			{#if $errors.password}
-				<small>{$errors.password}</small>
+			{#if errors.password}
+				<small>{errors.password}</small>
 			{/if}
 		</label>
 		<label for="gender">
@@ -81,22 +80,22 @@
 				<option value="M">Male</option>
 				<option value="F">Female</option>
 			</select>
-			{#if $errors.gender}
-				<small>{$errors.gender}</small>
+			{#if errors.gender}
+				<small>{errors.gender}</small>
 			{/if}
 		</label>
 		<label for="email">
 			Email:
 			<input type="text" name="email" id="email" use:form data-validations="required|email" />
-			{#if $errors.email}
-				<small>{$errors.email}</small>
+			{#if errors.email}
+				<small>{errors.email}</small>
 			{/if}
 		</label>
 		<label for="comment">
 			Comment:
 			<textarea name="comment" id="comment" use:form data-validations="required"></textarea>
-			{#if $errors.comment}
-				<small>{$errors.comment}</small>
+			{#if errors.comment}
+				<small>{errors.comment}</small>
 			{/if}
 		</label>
 		<label for="beverage">
@@ -109,13 +108,13 @@
 						data-validations="required"
 						value={item.value}
 						use:form={{ validateEvent: 'change' }}
-						bind:group={$values.beverage}
+						bind:group={values.beverage}
 					/>
 					{item.label}
 				</span>
 			{/each}
-			{#if $errors.beverage}
-				<small>{$errors.beverage}</small>
+			{#if errors.beverage}
+				<small>{errors.beverage}</small>
 			{/if}
 		</label>
 		<label for="favfoods">
@@ -128,13 +127,13 @@
 						data-validations="required"
 						value={item.value}
 						use:form={{ validateEvent: 'change' }}
-						bind:group={$values['favfoods']}
+						bind:group={values['favfoods']}
 					/>
 					{item.label}
 				</span>
 			{/each}
-			{#if $errors.favfoods}
-				<small>{$errors.favfoods}</small>
+			{#if errors.favfoods}
+				<small>{errors.favfoods}</small>
 			{/if}
 		</label>
 		<label for="story">
@@ -142,14 +141,14 @@
 			<div
 				contenteditable="true"
 				use:form={{ validateEvent: 'input', validations: 'required', name: 'story', html: true }}
-			/>
-			{#if $errors.story}
-				<small>{$errors.story}</small>
+			></div>
+			{#if errors.story}
+				<small>{errors.story}</small>
 			{/if}
 		</label>
 		<section>
-			<button type="submit" disabled={!$valid}>Submit</button>
-			<button type="button" on:click={reset}> Reset </button>
+			<button type="submit" disabled={!sanity.ok}>Submit</button>
+			<button type="button" onclick={reset}> Reset </button>
 		</section>
 	</div>
 </form>

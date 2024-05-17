@@ -36,7 +36,7 @@ import uForm from "@steveesamson/microform";
 export let defaultData:any = {};
 
 // Instatiate microform
-const { form, values, errors, submit, valid } = uForm({
+const { form, values, errors, submit, sanity } = uForm({
     // Set default form data
     data:{...defaultData},
     // Set a global event for validation, can be overriden on a each field.
@@ -56,13 +56,14 @@ const onSubmit = (data:unknown) => {
 
 On the instantiation of `microform`, we have access to:
 
-- `values`, a `FormValues`, which is a `svelte store` for form data.
-- `errors`, a `FormErrors`, which is a `svelte store` for form errors.
+- `values`, a `FormValues`, which represents form data.
+- `errors`, a `FormErrors`, which represents form errors.
 - `form`, which is a `svelte action` that actually does the `microform` magic.
 - `submit`, which is another `svelte action` to handle form submission.
-- `valid`, a `FormSanity`, which is a `svelte store` that tells if a form is clean/without errors.
+- `sanity`, a `FormSanity`, which tells us if a form is clean/without errors by it's `ok` property.
 - `reset`, a function to reset form
 - `onsubmit`, a function to handle form submission.
+
 
 ## In the view `html`
 
@@ -76,8 +77,8 @@ On the instantiation of `microform`, we have access to:
             id='username'
             use:form
             data-validations='required'>
-            {#if $errors.username}
-            <small>{$errors.username}</small>
+            {#if errors.username}
+            <small>{errors.username}</small>
             {/if}
         </label>
          <label for='email_account'>
@@ -89,8 +90,8 @@ On the instantiation of `microform`, we have access to:
             use:form={{
                 validations:'required|email'
             }}/>
-            {#if $errors.email_account}
-            <small>{$errors.email_account}</small>
+            {#if errors.email_account}
+            <small>{errors.email_account}</small>
             {/if}
         </label>
         <label for='gender'>
@@ -106,8 +107,8 @@ On the instantiation of `microform`, we have access to:
                 <options value='F'>Female</option>
                 <options value='M'>Male</option>
                 </select>
-            {#if $errors.gender}
-            <small>{$errors.gender}</small>
+            {#if errors.gender}
+            <small>{errors.gender}</small>
             {/if}
         </label>
         <label for='password'>
@@ -118,8 +119,8 @@ On the instantiation of `microform`, we have access to:
             id='password'
             use:form
             data-validations='required'>
-            {#if $errors.password}
-            <small>{$errors.password}</small>
+            {#if errors.password}
+            <small>{errors.password}</small>
             {/if}
         </label>
          <label for='confirm_password'>
@@ -130,8 +131,8 @@ On the instantiation of `microform`, we have access to:
             id='confirm_password'
             use:form
             data-validations='required|match:password'>
-            {#if $errors.confirm_password}
-            <small>{$errors.confirm_password}</small>
+            {#if errors.confirm_password}
+            <small>{errors.confirm_password}</small>
             {/if}
         </label>
         <label for="story">
@@ -144,15 +145,15 @@ On the instantiation of `microform`, we have access to:
                     name: 'story',
                     html: true
                 }}
-            />
-            {#if $errors.story}
-                <small>{$errors.story}</small>
+            ></div>
+            {#if errors.story}
+                <small>{errors.story}</small>
             {/if}
         </label>
 
         <button
         type='submit'
-        disabled={!$valid}>
+        disabled={!sanity.ok}>
             Submit form
         </button>
     </form>
@@ -171,8 +172,8 @@ While the above example uses the `submit` action of `microform`, form could also
 			data-validations="required|min-length:6"
 			use:form
 		/>
-		{#if $errors.password}
-		<small>{$errors.password}</small>
+		{#if errors.password}
+		<small>{errors.password}</small>
 		{/if}
 	</label>
 	<label for="confirm_password">
@@ -184,12 +185,12 @@ While the above example uses the `submit` action of `microform`, form could also
 			use:form
 			data-validations="required|match:password"
 		/>
-		{#if $errors.confirm_password}
-		<small>{$errors.confirm_password}</small>
+		{#if errors.confirm_password}
+		<small>{errors.confirm_password}</small>
 		{/if}
 	</label>
 
-	<button type="button" disabled="{!$valid}" on:click="{onsubmit(onSubmit)}">Submit form</button>
+	<button type="button" disabled="{!sanity.ok}" onclick="{onsubmit(onSubmit)}">Submit form</button>
 </form>
 ```
 
@@ -225,12 +226,8 @@ You need not bind the `values` to your fields except when there is a definite ne
 
 ```html
 <input
-	type="text"
-	name="email_account"
-	id="email_account"
-	value="{$values.email_account}"
-	data-validations="required|email"
-	use:form
+    ...
+	value="{values.email_account}"
 />
 ```
 
@@ -289,9 +286,9 @@ Validation event can be changed/specified on a per-field basis. For instance, in
                 name: 'story',
                 html: true
             }}
-        />
-        {#if $errors.story}
-            <small>{$errors.story}</small>
+        ></div>
+        {#if errors.story}
+            <small>{errors.story}</small>
         {/if}
     </label>
 </form>

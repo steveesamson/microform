@@ -1,27 +1,28 @@
-export * from "./types.js";
 import { writable, derived, get } from 'svelte/store';
 import { formAction } from './form-action.js';
-import type { FormErrors, FormSubmit, FormValues, MicroFormProps, MicroFormReturn } from './types.js';
+import type { FormErrors, FormSanity, FormSubmit, FormValues, MicroFormProps, MicroFormReturn } from './types.js';
 import type { Params } from './internal.js';
+import { bindStateToStore } from "./utils.js";
 
 const microForm = (props?: MicroFormProps): MicroFormReturn => {
     // form default values
     const data = props?.data || {};
     // form values
-    const values: FormValues = writable<Params>(data);
+    const _values = writable<Params>({ ...data });
     // internal checks
     const unfits = writable<Params>({});
     // external form errors
-    const errors: FormErrors = writable<Params>({});
+    const _errors = writable<Params>({});
     const isdirty = writable<boolean>(false);
 
-    const isclean = derived(([errors, unfits]), ([$errors, $unfits]) => {
+    const isclean = derived(([_errors, unfits]), ([$errors, $unfits]) => {
         const errVals = Object.values($errors);
         const unfitVals = Object.values($unfits);
         return (errVals.length === 0 || errVals.reduce((comm: boolean, next: string | undefined) => comm && !next, true))
             && (unfitVals.length === 0 || unfitVals.reduce((comm: boolean, next: string | undefined) => comm && !next, true));
     })
-    const valid = derived(([isclean, isdirty]), ([$isclean, $isdirty]) => {
+
+    const _valid = derived(([isclean, isdirty]), ([$isclean, $isdirty]) => {
         return $isclean && $isdirty;
     })
     const validationMap: Params = {};
@@ -31,13 +32,13 @@ const microForm = (props?: MicroFormProps): MicroFormReturn => {
         }
     } = props || {};
 
-    const form = formAction(values, errors, unfits, isdirty, options, validationMap);
+    const form = formAction(_values, _errors, unfits, isdirty, options, validationMap);
 
     const handleSubmit = (e: Event, handler: FormSubmit) => {
         e.preventDefault();
-        if (!get(valid)) return;
+        if (!get(_valid)) return;
 
-        handler({ ...get(values) });
+        handler({ ...get(_values) });
     }
 
     const onsubmit = (handler: FormSubmit) => {
@@ -54,25 +55,40 @@ const microForm = (props?: MicroFormProps): MicroFormReturn => {
     };
 
     const reset = () => {
-        errors.set({});
+        _errors.set({});
         unfits.set({});
-        values.set({ ...data });
+        _values.set({ ...data });
+        isdirty.set(false);
         for (const [name, { nodeRef, html }] of Object.entries(validationMap).filter(([, { nodeRef }]: [string, Params]) => !!nodeRef)) {
             if (nodeRef) {
-                nodeRef[html ? "innerHTML" : 'textContent'] = data[name] || '';
+                if (nodeRef.isContentEditable) {
+                    nodeRef[html ? "innerHTML" : 'textContent'] = data[name] || '';
+                } else {
+                    nodeRef["value"] = data[name] || '';
+                }
             }
         }
     };
 
+    const values: FormValues = $state<FormValues>({ ...data });
+    const errors: FormErrors = $state<FormValues>({});
+    const sanity: FormSanity = $state<FormSanity>({ok:get(_valid)});
+    
+    bindStateToStore(values, _values);
+    bindStateToStore(errors, _errors);
+    _valid.subscribe((changes: boolean) => {
+        sanity.ok = changes;
+    });
+
     return {
         values,
         errors,
-        valid,
+        sanity,
         form,
         submit,
         onsubmit,
         reset,
-    }
+    };
 };
 
 export default microForm;

@@ -1,6 +1,7 @@
 import { type Writable, type Readable } from "svelte/store";
 import type { Params } from "./internal.js";
 export type { Params };
+
 export type FieldTypes = "Standard" | "Popover" | "Checkable";
 export type InputTypes = 'text' | 'number' | 'color' | 'time' | 'date' | 'range' | 'email' | 'hidden' | 'password' | 'tel' | 'url';
 export type FieldType = HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement;
@@ -17,8 +18,8 @@ export type FormReturn = {
 
 export type ValidateEvent = 'input' | 'change' | 'keyup' | 'blur';
 
-export type FormValues = Writable<Params>;
-export type FormErrors = Writable<Params>;
+export type FormValues = Params;
+export type FormErrors = Params;
 export type Dirty = Writable<boolean>;
 
 export type ActionOptions = {
@@ -47,12 +48,14 @@ export type MicroFormProps = {
 	data?: Params;
 	options?: FormOptions
 }
-export type FormSanity = Readable<boolean>;
+export type FormSanity = {
+	ok:boolean;
+};
 export type MicroFormReturn = {
 	values: FormValues;
 	errors: FormErrors;
 	form: (node: HTMLElement, eventProps?: ActionOptions) => FormReturn;
-	valid: FormSanity;
+	sanity: FormSanity;
 	submit: (formNode: HTMLFormElement, handler: FormSubmit) => void;
 	onsubmit: (handler: FormSubmit) => (e: Event) => Promise<void>;
 	reset: () => void;

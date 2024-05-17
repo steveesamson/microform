@@ -23,7 +23,7 @@ const isExcluded = (node: unknown) => {
     return node instanceof HTMLInputElement && ['radio', 'checkbox', 'file'].includes(node.type.toLowerCase());
 }
 
-const checkFormFitness = (values: FormValues, unfits: Writable<Params>, validationMap: Params) => {
+const checkFormFitness = (values: Writable<Params>, unfits: Writable<Params>, validationMap: Params) => {
     const validate = useValidator(unfits, values);
     const _values = get(values);
     for (const [name, { validations }] of Object.entries(validationMap)) {
@@ -31,14 +31,15 @@ const checkFormFitness = (values: FormValues, unfits: Writable<Params>, validati
     }
 }
 
-export const formAction = (values: FormValues, errors: FormErrors, unfits: Writable<Params>, isdirty: Writable<boolean>, options: FormOptions, validationMap: Params): FormAction => {
+export const formAction = (values: Writable<Params>, errors: Writable<Params>, unfits: Writable<Params>, isdirty: Writable<boolean>, options: FormOptions, validationMap: Params): FormAction => {
     const validate = useValidator(errors, values);
 
     return (node: HTMLElement, eventProps?: ActionOptions): FormReturn => {
         const nodeName = isField(node) ? node.name : ''
         const { name: dsname = nodeName, validations: dsvalidations = '' } = node.dataset || {};
         const { name = dsname, validations = dsvalidations, validateEvent = options.validateEvent, html = false } = eventProps || {};
-        validationMap[name] = { validations, html, nodeRef: isField(node) ? false : node };
+        // validationMap[name] = { validations, html, nodeRef: isField(node) ? false : node };
+        validationMap[name] = { validations, html, nodeRef: node };
 
         const storedValue = get(values)[name] || '';
         let defValue = storedValue;
