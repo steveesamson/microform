@@ -1,10 +1,10 @@
 import { writable, derived, get } from 'svelte/store';
 import { formAction } from './form-action.js';
-import type { FormErrors, FormSanity, FormSubmit, FormValues, MicroFormProps, MicroFormReturn, ValidatorMap, ValidatorType } from './types.js';
+import type { FormErrors, FormSanity, FormSubmit, FormValues, Microform, MicroFormProps, MicroFormReturn, ValidatorMap, ValidatorType } from './types.js';
 import type { Params } from './internal.js';
 import { bindStateToStore } from "./utils.js";
 
-export const uform = (props?: MicroFormProps): MicroFormReturn => {
+export const uform:Microform = (props?: MicroFormProps): MicroFormReturn => {
     // form default values
     const data = props?.data || {};
     // form values
