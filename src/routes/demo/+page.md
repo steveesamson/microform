@@ -17,9 +17,9 @@
 
 ```ts
 <script>
-	import uForm, type { FieldProps } from "@steveesamson/microform";
+	import { type FieldProps, uform } from "@steveesamson/microform";
 
-	let { form, values, sanity, errors, submit, reset } = uForm({
+	let { form, values, sanity, errors, submit, reset } = uform({
 		data: {
 			email: 'vee.sam@gmail.com',
 			dob: '2023-02-06',

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import uForm, { IS_LEN } from '$lib/index.js';
+	import { uform } from '$lib/index.js';
 	import type { Params } from '$lib/internal.js';
 
-	let { form, values, sanity, errors, submit, reset } = uForm({
+	let { form, values, sanity, errors, submit, reset } = uform({
 		data: {
 			email: 'vee.sam@gmail.com',
 			dob: '2023-02-06',

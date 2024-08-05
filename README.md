@@ -26,12 +26,12 @@ Once you've added `microform` to your project, use it as shown below, in your vi
 
 ```ts
 <script>
-import uForm from "@steveesamson/microform";
+import { uform } from "@steveesamson/microform";
 // default form data, probably passed as props
 let defaultData:any = $props();
 
 // Instatiate microform
-const { form, values, errors, submit, sanity } = uForm({
+const { form, values, errors, submit, sanity } = uform({
     // Set default form data
     data:{...defaultData},
     // Set a global event for validation, can be overriden on a each field.
@@ -400,12 +400,12 @@ Validators could be overriden to provide custom validation and/or messages besid
 ### Approach 1
 ```ts
 <script>
-import uForm, { type FieldProps } from "@steveesamson/microform";
+import { type FieldProps, uform } from "@steveesamson/microform";
 // default form data, probably passed as props
 export let defaultData:any = {};
 
 // Instatiate microform
-const { form, values, errors, submit, sanity } = uForm({
+const { form, values, errors, submit, sanity } = uform({
     // Set default form data
     data:{...defaultData},
     // Set a global event for validation, can be overriden on a each field.
@@ -449,12 +449,12 @@ Therefore, the following is equivalent to the configuration in `Approach 1`:
 ### Approach 2
 ```ts
 <script>
-import uForm, { type FieldProps, IS_LEN } from "@steveesamson/microform";
+import { type FieldProps, IS_LEN, uform } from "@steveesamson/microform";
 // default form data, probably passed as props
 export let defaultData:any = {};
 
 // Instatiate microform
-const { form, values, errors, submit, sanity } = uForm({
+const { form, values, errors, submit, sanity } = uform({
     // Set default form data
     data:{...defaultData},
     // Set a global event for validation, can be overriden on a each field.
