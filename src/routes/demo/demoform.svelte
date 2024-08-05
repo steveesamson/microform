@@ -1,18 +1,21 @@
 <script lang="ts">
-	import uForm from '$lib/index.svelte.js';
-	import type { Params } from '$lib/types.js';
+	import uForm, { IS_LEN } from '$lib/index.js';
+	import type { Params } from '$lib/internal.js';
 
-	let { form, values, sanity, errors, submit, onsubmit, reset } = uForm({
+	let { form, values, sanity, errors, submit, reset } = uForm({
 		data: {
-			email: 'stevee.samson@gmail.com',
+			email: 'vee.sam@gmail.com',
 			dob: '2023-02-06',
 			supper_time: '13:35',
-			favfoods: 'pando,jrice',
+			favfoods: ['pando','jrice'],
 			beverage: 'coffee', //'coffee,milk'
 			comment: 'I shall.',
 			story: '<p>It is a story</p>',
 			fullname: 'Steve Samson',
-			password: 'some-top-dark-secret'
+			password: 'some-top-dark-secret',
+		},
+		options: {
+			validateEvent:'input',
 		}
 	});
 
@@ -42,28 +45,38 @@
 	<div>
 		<label for="fullname">
 			Name:
-			<input type="text" name="fullname" id="fullname" use:form data-validations="required" />
+			<input type="text" name="fullname" id="fullname" use:form={{ validations: ['required'] }} />
 			{#if errors.fullname}
 				<small>{errors.fullname}</small>
 			{/if}
 		</label>
 		<label for="dob">
 			DOB:
-			<input type="date" name="dob" id="dob" use:form data-validations="required" />
+			<input type="date" name="dob" id="dob" use:form={{ validations: ['required'] }} />
 			{#if errors.dob}
 				<small>{errors.dob}</small>
 			{/if}
 		</label>
 		<label for="supper_time">
 			Supper time:
-			<input type="time" name="supper_time" id="supper_time" use:form data-validations="required" />
+			<input
+				type="time"
+				name="supper_time"
+				id="supper_time"
+				use:form={{ validations: ['required'] }}
+			/>
 			{#if errors.supper_time}
 				<small>{errors.supper_time}</small>
 			{/if}
 		</label>
 		<label for="password">
 			Password:
-			<input type="password" name="password" id="password" use:form data-validations="required" />
+			<input
+				type="password"
+				name="password"
+				id="password"
+				use:form={{ validations: ['required'] }}
+			/>
 			{#if errors.password}
 				<small>{errors.password}</small>
 			{/if}
@@ -73,8 +86,7 @@
 			<select
 				name="gender"
 				id="gender"
-				use:form={{ validateEvent: 'change' }}
-				data-validations="required"
+				use:form={{ validateEvent: 'change', validations: ['required'] }}
 			>
 				<option value="">Select gender</option>
 				<option value="M">Male</option>
@@ -86,14 +98,34 @@
 		</label>
 		<label for="email">
 			Email:
-			<input type="text" name="email" id="email" use:form data-validations="required|email" />
+			<input
+				type="text"
+				name="email"
+				id="email"
+				use:form={{ validations: ['required', 'email'] }}
+			/>
 			{#if errors.email}
 				<small>{errors.email}</small>
 			{/if}
 		</label>
+		<label for="resume">
+			Resume:
+			<input
+				type="file"
+				name="resume"
+				id="resume"
+				use:form={{ 
+					validateEvent:'change', 
+					validations: ['required', 'file-size-mb:3'] 
+				}}
+			/>
+			{#if errors.resume}
+				<small>{errors.resume}</small>
+			{/if}
+		</label>
 		<label for="comment">
 			Comment:
-			<textarea name="comment" id="comment" use:form data-validations="required"></textarea>
+			<textarea name="comment" id="comment" use:form={{ validations: ['required'] }}></textarea>
 			{#if errors.comment}
 				<small>{errors.comment}</small>
 			{/if}
@@ -105,9 +137,8 @@
 					<input
 						type="radio"
 						name="beverage"
-						data-validations="required"
 						value={item.value}
-						use:form={{ validateEvent: 'change' }}
+						use:form={{ validateEvent: 'input', validations: ['required'] }}
 						bind:group={values.beverage}
 					/>
 					{item.label}
@@ -124,9 +155,8 @@
 					<input
 						type="checkbox"
 						name="favfoods"
-						data-validations="required"
 						value={item.value}
-						use:form={{ validateEvent: 'change' }}
+						use:form={{ validateEvent: 'change', validations: ['required'] }}
 						bind:group={values['favfoods']}
 					/>
 					{item.label}
@@ -140,7 +170,7 @@
 			Story:
 			<div
 				contenteditable="true"
-				use:form={{ validateEvent: 'input', validations: 'required', name: 'story', html: true }}
+				use:form={{ validateEvent: 'input', validations: ['required'], name: 'story', html: true }}
 			></div>
 			{#if errors.story}
 				<small>{errors.story}</small>

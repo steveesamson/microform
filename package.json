@@ -21,7 +21,7 @@
 	"exports": {
 		".": {
 			"types": "./dist/types.d.ts",
-			"svelte": "./dist/index.svelte.js"
+			"svelte": "./dist/index.js"
 		}
 	},
 	"author": "Steve S. Samson <stevee.samson@gmail.com> (http://github.com/steveesamson)",
@@ -57,7 +57,7 @@
 		"typescript": "^5.0.0",
 		"vite": "^5.0.3"
 	},
-	"default": "./dist/index.svelte.js",
+	"default": "./dist/index.js",
 	"types": "./dist/types.d.ts",
 	"type": "module",
 	"keywords": [

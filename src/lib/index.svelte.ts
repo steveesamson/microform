@@ -1,10 +1,10 @@
 import { writable, derived, get } from 'svelte/store';
 import { formAction } from './form-action.js';
-import type { FormErrors, FormSanity, FormSubmit, FormValues, MicroFormProps, MicroFormReturn } from './types.js';
+import type { FormErrors, FormSanity, FormSubmit, FormValues, MicroFormProps, MicroFormReturn, ValidatorMap, ValidatorType } from './types.js';
 import type { Params } from './internal.js';
 import { bindStateToStore } from "./utils.js";
 
-const microForm = (props?: MicroFormProps): MicroFormReturn => {
+export const microForm = (props?: MicroFormProps): MicroFormReturn => {
     // form default values
     const data = props?.data || {};
     // form values
@@ -25,14 +25,16 @@ const microForm = (props?: MicroFormProps): MicroFormReturn => {
     const _valid = derived(([isclean, isdirty]), ([$isclean, $isdirty]) => {
         return $isclean && $isdirty;
     })
+
     const validationMap: Params = {};
     const {
         options = {
-            validateEvent: 'blur'
+            validateEvent: 'blur',
+            validators: {} as ValidatorMap<ValidatorType>
         }
     } = props || {};
 
-    const form = formAction(_values, _errors, unfits, isdirty, options, validationMap);
+    const form  = formAction(_values, _errors, unfits, isdirty, options, validationMap);
 
     const handleSubmit = (e: Event, handler: FormSubmit) => {
         e.preventDefault();
@@ -48,6 +50,7 @@ const microForm = (props?: MicroFormProps): MicroFormReturn => {
         };
         return onSubmit;
     };
+
     const submit = (formNode: HTMLFormElement, handler: FormSubmit) => {
         formNode.addEventListener('submit', (e: SubmitEvent) => {
             handleSubmit(e, handler);
@@ -90,5 +93,3 @@ const microForm = (props?: MicroFormProps): MicroFormReturn => {
         reset,
     };
 };
-
-export default microForm;
