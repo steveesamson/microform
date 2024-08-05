@@ -4,14 +4,15 @@ import { getEditableContent } from "./utils.js";
 import type {
     ActionOptions,
     FieldType,
-    FormErrors,
     FormOptions,
-    FormValues,
     InputType,
     FormReturn,
-    Params,
-    FormAction
+    FormAction,
+    ValidateArgs,
+    ValidatorKey
 } from "./types.js";
+
+import type { Params } from "./internal.js";
 
 
 const isField = (node: unknown): node is FieldType => {
@@ -20,25 +21,39 @@ const isField = (node: unknown): node is FieldType => {
         node instanceof HTMLTextAreaElement;
 }
 const isExcluded = (node: unknown) => {
-    return node instanceof HTMLInputElement && ['radio', 'checkbox', 'file'].includes(node.type.toLowerCase());
+    return node instanceof HTMLInputElement && ['radio', 'checkbox'].includes(node.type.toLowerCase());
+}
+const isCheckbox = (node: unknown) => {
+    return node instanceof HTMLInputElement && ['checkbox'].includes(node.type.toLowerCase());
+}
+const isRadio = (node: unknown) => {
+    return node instanceof HTMLInputElement && ['radio'].includes(node.type.toLowerCase());
 }
 
-const checkFormFitness = (values: FormValues, unfits: Writable<Params>, validationMap: Params) => {
-    const validate = useValidator(unfits, values);
+
+const checkFormFitness = (values: Writable<Params>, validationMap: Params, validate: (vargs: ValidateArgs) => Promise<void>) => {
     const _values = get(values);
     for (const [name, { validations }] of Object.entries(validationMap)) {
         validate({ name, value: _values[name], validations, });
     }
 }
 
-export const formAction = (values: FormValues, errors: FormErrors, unfits: Writable<Params>, isdirty: Writable<boolean>, options: FormOptions, validationMap: Params): FormAction => {
-    const validate = useValidator(errors, values);
+export const formAction = (values: Writable<Params>, errors: Writable<Params>, unfits: Writable<Params>, isdirty: Writable<boolean>, options: FormOptions, validationMap: Params): FormAction => {
+    const { validators: customValidators } = options;
+    const { validate, validators } = useValidator(errors, values);
+
+    // override
+    if (customValidators) {
+        for (const [key, val] of Object.entries(customValidators)) {
+            validators[key as ValidatorKey] = val;
+        }
+    }
 
     return (node: HTMLElement, eventProps?: ActionOptions): FormReturn => {
         const nodeName = isField(node) ? node.name : ''
-        const { name: dsname = nodeName, validations: dsvalidations = '' } = node.dataset || {};
-        const { name = dsname, validations = dsvalidations, validateEvent = options.validateEvent, html = false } = eventProps || {};
-        validationMap[name] = { validations, html, nodeRef: isField(node) ? false : node };
+        const { name: dsname = nodeName } = node.dataset || {};
+        const { name = dsname, validations = [], validateEvent = options.validateEvent = 'blur', html = false } = eventProps || {};
+        validationMap[name] = { validations, html, nodeRef: node };
 
         const storedValue = get(values)[name] || '';
         let defValue = storedValue;
@@ -66,6 +81,7 @@ export const formAction = (values: FormValues, errors: FormErrors, unfits: Writa
             }
 
             if (isField(node) && !isExcluded(node)) {
+
                 const value = (e.target as InputType).value || '';
                 values.update((data: Params) => {
                     return { ...data, [name]: value };
@@ -77,8 +93,30 @@ export const formAction = (values: FormValues, errors: FormErrors, unfits: Writa
                     return { ...data, [name]: htm, [`${name}-text`]: text };
                 });
             }
+            else if (isCheckbox(node)) {
+                const { checked, value: val } = node as HTMLInputElement;
+                const { [name]: fieldValue } = get(values);
+                let current: string[] = fieldValue;
+                if (checked) {
+                    current.push(val);
+                } else {
+                    current = current.filter((next: string) => next !== val);
+                }
+                values.update((data: Params) => {
+                    return { ...data, [name]: [...new Set(current)] };
+                });
 
-            checkFormFitness(values, unfits, validationMap);
+            }else if (isRadio(node)) {
+                const { value: fvalue } = node as HTMLInputElement;
+                values.update((data: Params) => {
+                    return { ...data, [name]: fvalue };
+                });
+            }
+
+            const { validate: validateUnfit } = useValidator(unfits, values, validators);
+
+            checkFormFitness(values, validationMap, validateUnfit);
+
             isdirty.set(true);
 
         }
@@ -90,6 +128,6 @@ export const formAction = (values: FormValues, errors: FormErrors, unfits: Writa
                 node.removeEventListener(validateEvent, updateNode);
             }
         };
-    }
+    };
 
 }

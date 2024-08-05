@@ -1,7 +1,7 @@
-import { get } from "svelte/store";
-import type { FormErrors, FormValues, Params, ValidateArgs } from "./types.js";
-import { makeName } from "./utils.js";
-
+import { get, type Writable } from "svelte/store";
+import type { FieldProps, ValidateArgs, ValidatorType, ValidatorMap, ValidatorKey, Validator } from "./types.js";
+import { makeName, isValidFileSize } from "./utils.js";
+import type { Params } from "./internal.js";
 
 const regexes = {
     number: /^[-+]?[0-9]+(\.[0-9]+)?$/g,
@@ -13,188 +13,173 @@ const regexes = {
     ip: /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g,
 } as const;
 
+export const IS_REQUIRED = "required";
+export const IS_EMAIL = "email";
+export const IS_URL = "url";
+export const IS_IP = "ip";
+export const IS_INTEGER = "integer";
+export const IS_NUMBER = "number";
+export const IS_ALPHA = "alpha";
+export const IS_ALPHANUM = "alphanum";
+export const IS_MIN_LEN = "minlen";
+export const IS_MAX_LEN = "maxlen";
+export const IS_LEN = "len";
+export const IS_MIN = "min";
+export const IS_MAX = "max";
+export const IT_MATCHES = "match";
+export const IS_FILE_SIZE_MB = 'file-size-mb';
 
-const getErrorText = (inputName: string, errorType: string, extra: string = '') => {
-    inputName = makeName(inputName);
+const getDefaultValidators = ():ValidatorMap<ValidatorType> => {
 
-    switch (errorType.toLowerCase()) {
-        case 'required':
-            return inputName + ' is mandatory.';
-        case 'match':
-            return inputName + ' does not match ' + makeName(extra);
-        case 'func':
-            return inputName + extra;
-        case 'captcha':
-            return inputName + ' does not match the image.';
-        case 'email':
-            return inputName + ' should be a valid email.';
-        case 'url':
-            return inputName + ' should be a valid URL.';
-        case 'cron':
-            return inputName + ' should be a valid cron expression.';
-        case 'ip':
-            return inputName + ' should be a valid IP.';
-        case 'integer':
-            return inputName + ' must be an integer.';
-        case 'number':
-            return inputName + ' should be a number.';
-        case 'alpha':
-            return inputName + ' should be a string of alphabets.';
-        case 'alphanum':
-            return inputName + ' should be a string of alphanumerics starting with alphabets.';
-        case 'min-length':
-            return inputName + ' must be at least ' + extra + ' characters long.';
-        case 'max-length':
-            return inputName + ' must not be more than ' + extra + ' characters long.';
-        case 'length':
-            return inputName + ' must be exactly ' + extra + ' characters long.';
-        // case 'length':
-        //     return inputName + ' must not be greater than ' + extra + '.';
-        default:
-            return errorType;
-    }
-};
+    const validators: ValidatorMap<ValidatorType> = {
+        [IS_REQUIRED]: ({ label, value }: FieldProps) => {
+            if(!value || (Array.isArray(value) && !value.length)){
+                return  `${label} is mandatory.`;
+            }
 
-const checkFileSize = (node: HTMLInputElement | undefined, maxFileSizeInMB: number) => {
-    if (!node) return "";
-    const { files } = node;
-    if (!files) return `${node.name} is required`;
+            return "";
+        },
+        [IS_EMAIL]: ({ value, label }: FieldProps) => {
+            return (!!value && !value.match(regexes['email'])) ? `${label} should be a valid email.` : '';
+        },
+        [IS_URL]: ({ value, label }: FieldProps) => {
+            return !!value && !value.match(regexes['url']) ?  `${label} should be a valid URL.` : "";
+        },
+        [IS_IP]: ({ value, label }: FieldProps) => {
+            return !!value && !value.match(regexes['ip']) ? `${label} should be a valid IP.` : "";
+        },
+        [IS_INTEGER]: ({ value, label }: FieldProps) => {
+            return !!value && !value.match(regexes['integer']) ?  `${label} must be an integer number.` : "";
+        },
+        [IS_NUMBER]: ({ value, label }: FieldProps) => {
+            return !!value && !value.match(regexes['number']) ?  `${label} must be a number.` : "";
+        },
+        [IS_ALPHA]: ({ value, label }: FieldProps) => {
+            return !!value && !value.match(regexes['alpha']) ?  `${label} should be a string of alphabets.` : "";
+        },
+        [IS_ALPHANUM]: ({ value, label }: FieldProps) => {
+            return !!value && !value.match(regexes['alphanum']) ? `${label} should be a string of alphanumerics starting with alphabets.` : "";
+        },
+        [IS_MIN_LEN]: ({ value, label, parts }: FieldProps) => {
 
-    const max = maxFileSizeInMB * 1024 * 1024;
-    for (const file of files) {
-        if (file.size > max) {
-            return `File '${file.name}' is larger the ${maxFileSizeInMB}MB.`;
+            if(!!value){
+                if (!parts || parts.length < 2) {
+                    return `${label}: min-length validation requires minimum length.`;
+                }
+                const extra = parts[1].trim();
+    
+                return value.length >= parseInt(parts[1], 10) ? "" : `${label} must be at least ${extra} characters long.`;
+            }
+            return "";
+            
+        },
+        [IS_MAX_LEN]: ({ value, label, parts }: FieldProps) => {
+            if(!!value){
+                if (!parts || parts.length < 2) {
+                    return `${label}: max-length validation requires maximum length.`;
+                }
+                const extra = parts[1].trim();
+                return value.length <= parseInt(parts[1], 10) ? "" : `${label} must be at most ${extra} characters long.`;
+            }
+            return "";
+        },
+        [IS_LEN]: ({ value, label, parts }: FieldProps) => {
+
+            if(!!value){
+                if (!parts || parts.length < 2) {
+                    return `${label}: length validation requires length.`;
+                }
+                const extra = parts[1].trim();
+                return value.length === parseInt(parts[1], 10) ? "" : `${label} must exactly be ${extra} characters long.`;
+            }
+            return "";
+        
+        },
+        [IS_MAX]: ({ value, label, parts }: FieldProps) => {
+
+            if(!!value){
+                if (!parts || parts.length < 2) {
+                    return `${label}: max validation requires the maximum value.`;
+                }
+                const extra = parts[1].trim();
+                return parseInt(value, 10) <= parseInt(parts[1], 10) ? "" : `${label} must not be greater than ${extra}.`;
+            }
+            return "";
+
+            
+        },
+        [IS_MIN]: ({ value, label, parts }: FieldProps) => {
+
+            if(!!value){
+                if (!parts || parts.length < 2) {
+                    return `${label}: min validation requires the minimum value.`;
+                }
+                const extra = parts[1].trim();
+                return parseInt(value, 10) >= parseInt(parts[1], 10) ? "" : `${label} must not be less than ${extra}.`;
+            }
+            return "";
+       
+        },
+        [IT_MATCHES]: ({ values, value, label, parts }: FieldProps) => {
+            if(value){
+                if (!parts || parts.length < 2) {
+                    return `${label}: match validation requires id of field to match`;
+                }
+                const partyName: string = parts[1].trim();
+                const partyValue = values[partyName];
+                return value === partyValue ? "" : `${label} does not match ${makeName(partyName)}.`;
+            }
+            return "";
+
+        },
+        [IS_FILE_SIZE_MB]: ({value, node, label, parts }: FieldProps) => {
+        
+            if(!!value){
+                if (!parts || parts.length < 2) {
+                    return `${label}: max file size in MB validation requires maximum file size of mb value.`;;
+                }
+                const extra = parts[1].trim();
+                return isValidFileSize(node as HTMLInputElement | undefined, parseInt(extra, 10));
+            }
+            return "";
+            
         }
-    }
-    return "";
+
+    };
+    return validators;
 }
-export const useValidator = (errors: FormErrors, values: FormValues) => {
+
+export const useValidator = (errors: Writable<Params>, values: Writable<Params>, validators:ValidatorMap<ValidatorType> = getDefaultValidators()) => {
+    
     const setError = (name: string, error: string) => {
         errors.update((prev: Params) => {
             return { ...prev, [name]: error };
         })
     }
 
-    return async ({ name, value, validations = '', node = undefined }: ValidateArgs) => {
-        let error: string = '';
-        if (validations) {
-            const inputName = name,
-                _validations = validations.split('|');
+    return {
+        validate: async ({ name, value, validations = [], node = undefined }: ValidateArgs) => {
+            if (validations.length) {
+                const _validations = validations.includes('required')? ['required', ...validations.filter(( val: Validator ) => val !== 'required' )] : [...validations];
 
-            for (let i = 0; i < _validations.length; ++i) {
+                for (let i = 0; i < _validations.length; ++i) {
 
-                const validation = _validations[i],
-                    typeDetails = validation.split(':'),
-                    type = typeDetails[0].trim();
+                    const validation = _validations[i],
+                        parts = validation.split(':'),
+                        type = parts[0].trim() as ValidatorKey;
 
-                let partyName, partyValue;
+                    const validator = validators[type];
+                    if (!validator) return;
 
-                switch (type.toLowerCase()) {
-                    case 'required':
-                        error = !value || !value.length ? getErrorText(inputName, 'required') : '';
-                        setError(name, error);
+                    const error: string = validator({ name, label: makeName(name), value, values: get(values), node, parts });
+                    setError(name, error ? error : '');
+                    if(error){
                         break;
-
-                    case 'match':
-                        error = typeDetails.length < 2 ? inputName + ': match validation requires party target' : '';
-                        setError(name, error);
-                        if (error) break;
-
-                        partyName = typeDetails[1].trim();
-                        partyValue = get(values)[partyName] || '';
-
-                        error = !value || value !== partyValue ? getErrorText(inputName, 'match', typeDetails[1]) : '';
-                        setError(name, error);
-
-                        break;
-                    case 'email':
-                        error = !value || !value.match(regexes['email']) ? getErrorText(inputName, 'email') : '';
-                        setError(name, error);
-                        break;
-                    case 'url':
-                        error = !value || !value.match(regexes['url']) ? getErrorText(inputName, 'url') : '';
-                        setError(name, error);
-                        break;
-                    case 'ip':
-                        error = !value || !value.match(regexes['ip']) ? getErrorText(inputName, 'ip') : '';
-                        setError(name, error);
-                        break;
-                    case 'integer':
-                        error = !value || !value.match(regexes['integer']) ? getErrorText(inputName, 'integer') : '';
-                        setError(name, error);
-                        break;
-                    case 'number':
-                        error = !value || !value.match(regexes['number']) ? getErrorText(inputName, 'number') : '';
-                        setError(name, error);
-                        break;
-                    case 'alpha':
-                        error = !value || !value.match(regexes['alpha']) ? getErrorText(inputName, 'alpha') : '';
-                        setError(name, error);
-                        break;
-                    case 'alphanum':
-                        error =
-                            !value || !value.match(regexes['alphanum']) ? getErrorText(inputName, 'alphanum') : '';
-                        setError(name, error);
-                        break;
-                    case 'min-length':
-                        error = typeDetails.length < 2 ? inputName + ': min-length validation requires width' : '';
-                        setError(name, error);
-                        if (error) break;
-                        error =
-                            !value || value.length < parseInt(typeDetails[1], 10)
-                                ? getErrorText(inputName, 'min-length', typeDetails[1])
-                                : '';
-                        setError(name, error);
-                        break;
-                    case 'max-length':
-                        error = typeDetails.length < 2 ? inputName + ': max-length validation requires width' : '';
-                        setError(name, error);
-                        if (error) break;
-                        error =
-                            !value || value.length > parseInt(typeDetails[1], 10)
-                                ? getErrorText(inputName, 'max-length', typeDetails[1])
-                                : '';
-                        setError(name, error);
-                        break;
-                    case 'length':
-                        error = typeDetails.length < 2 ? inputName + ': length validation requires width' : '';
-                        setError(name, error);
-
-                        if (error) break;
-                        error =
-                            !value || value.length !== parseInt(typeDetails[1], 10)
-                                ? getErrorText(inputName, 'length', typeDetails[1])
-                                : '';
-                        setError(name, error);
-                        break;
-                    case 'max':
-                        error = typeDetails.length < 2 ? inputName + ': max validation requires max value' : '';
-                        setError(name, error);
-
-                        if (error) break;
-                        error =
-                            !value || parseInt(value, 10) !== parseInt(typeDetails[1], 10)
-                                ? getErrorText(inputName, 'max', typeDetails[1])
-                                : '';
-                        setError(name, error);
-                        break;
-                    case 'max-file-size-mb':
-                        error = typeDetails.length < 2 ? inputName + ': max file size in MB validation requires max-file-size-mb value' : '';
-                        setError(name, error);
-
-                        if (error) break;
-
-                        error = checkFileSize(node as HTMLInputElement | undefined, parseInt(typeDetails[1], 10));
-                        setError(name, error);
-                        break;
-                    default:
+                    }
                 }
-                if (error) {
-                    setError(name, error);
-                    break;
-                }
-            } //end
-        }
+            }
+        },
+        validators
     };
 
 };

@@ -1,7 +1,8 @@
 <script>
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
-	$: path = $page.route.id;
+	let path = $page.route.id;
+	const { children } = $props();
 </script>
 
 <header>
@@ -17,7 +18,7 @@
 	</nav>
 </header>
 <main>
-	<slot />
+	{@render children()}
 </main>
 
 <style>
