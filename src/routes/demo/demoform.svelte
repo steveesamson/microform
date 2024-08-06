@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { uform } from '$lib/index.js';
+	import uform from '$lib/index.js';
 	import type { Params } from '$lib/internal.js';
 
 	let { form, values, sanity, errors, submit, reset } = uform({

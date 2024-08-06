@@ -26,7 +26,7 @@ Once you've added `microform` to your project, use it as shown below, in your vi
 
 ```ts
 <script>
-import { uform } from "@steveesamson/microform";
+import uform  from "@steveesamson/microform";
 // default form data, probably passed as props
 let defaultData:any = $props();
 
@@ -400,7 +400,7 @@ Validators could be overriden to provide custom validation and/or messages besid
 ### Approach 1
 ```ts
 <script>
-import { type FieldProps, uform } from "@steveesamson/microform";
+import uform, { type FieldProps } from "@steveesamson/microform";
 // default form data, probably passed as props
 export let defaultData:any = {};
 
@@ -449,7 +449,7 @@ Therefore, the following is equivalent to the configuration in `Approach 1`:
 ### Approach 2
 ```ts
 <script>
-import { type FieldProps, IS_LEN, uform } from "@steveesamson/microform";
+import uform, { type FieldProps, IS_LEN } from "@steveesamson/microform";
 // default form data, probably passed as props
 export let defaultData:any = {};
 

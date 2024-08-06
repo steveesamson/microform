@@ -1,1 +1,0 @@
-import{v as r,w as a,A as c,a3 as e,u as i,a4 as u,d as l,X as _}from"./runtime.Irf3Z8oC.js";function m(){const s=c,n=s.l.u;n&&(n.b.length&&r(()=>{f(s),e(n.b)}),a(()=>{const o=i(()=>n.m.map(u));return()=>{for(const t of o)typeof t=="function"&&t()}}),n.a.length&&a(()=>{f(s),e(n.a)}))}function f(s){if(s.l.s)for(const n of s.l.s)l(n);_(s.s)}export{m as i};

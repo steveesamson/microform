@@ -74,4 +74,4 @@ export type MicroFormReturn = {
 	onsubmit: (handler: FormSubmit) => (e: Event) => Promise<void>;
 	reset: () => void;
 }
-
+export type Microform =  (props?: MicroFormProps) => MicroFormReturn;

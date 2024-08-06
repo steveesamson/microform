@@ -4,7 +4,7 @@ import type { FormErrors, FormSanity, FormSubmit, FormValues, Microform, MicroFo
 import type { Params } from './internal.js';
 import { bindStateToStore } from "./utils.js";
 
-export const uform:Microform = (props?: MicroFormProps): MicroFormReturn => {
+const microform:Microform = (props?: MicroFormProps): MicroFormReturn => {
     // form default values
     const data = props?.data || {};
     // form values
@@ -93,3 +93,4 @@ export const uform:Microform = (props?: MicroFormProps): MicroFormReturn => {
         reset,
     };
 };
+export default microform;
