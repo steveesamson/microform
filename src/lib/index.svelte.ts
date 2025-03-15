@@ -76,12 +76,7 @@ const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
     const values: FormValues = $state<FormValues>({ ...data });
     const errors: FormErrors = $state<FormValues>({});
     const sanity: FormSanity = $state<FormSanity>({ ok: get(_valid) });
-    const setValue = (field: string, value: unknown) => {
-        values[field] = value;
-    }
-    const setError = (field: string, value: unknown) => {
-        errors[field] = value;
-    }
+
     bindStateToStore(values, _values);
     bindStateToStore(errors, _errors);
     _valid.subscribe((changes: boolean) => {
@@ -96,8 +91,6 @@ const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
         submit,
         onsubmit,
         reset,
-        setError,
-        setValue
     };
 };
 export default microform;

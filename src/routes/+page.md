@@ -36,8 +36,7 @@ import uform from "@steveesamson/microform";
 let defaultData:any = $props();
 
 // Instatiate microform
-// const { form, values, errors, submit, sanity } = uform({
-const { form, values, errors, submit, sanity, setValue, setError } = uform({
+const { form, values, errors, submit, sanity } = uform({
     // Set default form data
     data:{...defaultData},
     // Set a global event for validation, can be overriden on a each field.
@@ -69,8 +68,6 @@ On the instantiation of `microform`, we have access to:
 - `sanity`, a `FormSanity`, which tells us if a form is clean/without errors by it's `ok` property.
 - `reset`, a function to reset form
 - `onsubmit`, a function to handle form submission.
-- `setValue`, a function to mutate state in order to avoid `ownership_invalid_mutation` errors, especially, when values is fed as props to other components that intend to mutate `values` states.
-- `setError`, is a function introduced for the same reason `setValue` was added; it give privileges to components authored on `microform` that may mutate the `errors` state.
 
 ### In the view Html
 
