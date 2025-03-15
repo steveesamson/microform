@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"version":"1722947262214"}
+=======
+{"version":"1741997168638"}
+>>>>>>> 9ebf6f2 (add setValue and setError to allow values/errors mutation in other components)

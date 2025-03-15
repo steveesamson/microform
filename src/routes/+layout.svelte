@@ -1,8 +1,8 @@
 <script>
-	import { version } from "../../package.json";
+	import { version } from '../../package.json';
 	import { base } from '$app/paths';
-	import { page } from '$app/stores';
-	let path = $page.route.id;
+	import { page } from '$app/state';
+	let path = page.route.id;
 	const { children } = $props();
 </script>
 

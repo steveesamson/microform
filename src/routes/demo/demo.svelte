@@ -7,15 +7,15 @@
 			email: 'vee.sam@gmail.com',
 			dob: '2023-02-06',
 			supper_time: '13:35',
-			favfoods: ['pando','jrice'],
+			favfoods: ['pando', 'jrice'],
 			beverage: 'coffee', //'coffee,milk'
 			comment: 'I shall.',
 			story: '<p>It is a story</p>',
 			fullname: 'Steve Samson',
-			password: 'some-top-dark-secret',
+			password: 'some-top-dark-secret'
 		},
 		options: {
-			validateEvent:'input',
+			validateEvent: 'input'
 		}
 	});
 
@@ -114,9 +114,9 @@
 				type="file"
 				name="resume"
 				id="resume"
-				use:form={{ 
-					validateEvent:'change', 
-					validations: ['required', 'file-size-mb:3'] 
+				use:form={{
+					validateEvent: 'change',
+					validations: ['required', 'file-size-mb:3']
 				}}
 			/>
 			{#if errors.resume}
