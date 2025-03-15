@@ -1,1 +1,0 @@
-import{y as o,o as t,u as c}from"./runtime.s70L-IuO.js";function u(n){throw new Error("lifecycle_outside_component")}function i(n){o===null&&u(),o.l!==null?r(o).m.push(n):t(()=>{const e=c(n);if(typeof e=="function")return e})}function r(n){var e=n.l;return e.u??={a:[],b:[],m:[]}}export{i as o};

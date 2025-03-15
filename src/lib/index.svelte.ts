@@ -4,11 +4,7 @@ import type { FormErrors, FormSanity, FormSubmit, FormValues, Microform, MicroFo
 import type { Params } from './internal.js';
 import { bindStateToStore } from "./utils.js";
 
-<<<<<<< HEAD
 const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
-=======
-const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
->>>>>>> 9ebf6f2 (add setValue and setError to allow values/errors mutation in other components)
     // form default values
     const data = props?.data || {};
     // form values
@@ -38,11 +34,7 @@ const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
         }
     } = props || {};
 
-<<<<<<< HEAD
     const form = formAction(_values, _errors, unfits, isdirty, options, validationMap);
-=======
-    const form = formAction(_values, _errors, unfits, isdirty, options, validationMap);
->>>>>>> 9ebf6f2 (add setValue and setError to allow values/errors mutation in other components)
 
     const handleSubmit = (e: Event, handler: FormSubmit) => {
         e.preventDefault();

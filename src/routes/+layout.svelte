@@ -1,5 +1,5 @@
 <script>
-	import { version } from '../../package.json';
+	import pkg from '../../package.json';
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	let path = page.route.id;
@@ -10,7 +10,7 @@
 	<nav>
 		<div>
 			<strong>µform</strong>
-			<em>Microform: v{version}</em>
+			<em>Microform: v{pkg.version}</em>
 		</div>
 		<a href={`${base}/`} title="Home" class:active={path === '/'}>Home</a>
 		<a href={`${base}/demo`} title="Microform Demo" class:active={path === '/demo'}
