@@ -1,5 +1,5 @@
 <script>
-	import Form from './demoform.svelte';
+	import Form from './demo.svelte';
 </script>
 
 <svelte:head>
@@ -71,11 +71,11 @@
 	<div>
 		<label for="fullname">
 			Name:
-			<input 
-			type="text" 
-			name="fullname" 
-			id="fullname" 
-			use:form={{ validations: ['required'] }} 
+			<input
+			type="text"
+			name="fullname"
+			id="fullname"
+			use:form={{ validations: ['required'] }}
 			/>
 			{#if errors.fullname}
 				<small>{errors.fullname}</small>
@@ -83,11 +83,11 @@
 		</label>
 		<label for="dob">
 			DOB:
-			<input 
-			type="date" 
-			name="dob" 
-			id="dob" 
-			use:form={{ validations: ['required'] }} 
+			<input
+			type="date"
+			name="dob"
+			id="dob"
+			use:form={{ validations: ['required'] }}
 			/>
 			{#if errors.dob}
 				<small>{errors.dob}</small>
@@ -150,9 +150,9 @@
 				type="file"
 				name="resume"
 				id="resume"
-				use:form={{ 
-					validateEvent:'change', 
-					validations: ['required', 'file-size-mb:3'] 
+				use:form={{
+					validateEvent:'change',
+					validations: ['required', 'file-size-mb:3']
 				}}
 			/>
 			{#if errors.resume}
@@ -161,9 +161,9 @@
 		</label>
 		<label for="comment">
 			Comment:
-			<textarea 
-			name="comment" 
-			id="comment" 
+			<textarea
+			name="comment"
+			id="comment"
 			use:form={{ validations: ['required'] }}
 			></textarea>
 			{#if errors.comment}
@@ -210,11 +210,11 @@
 			Story:
 			<div
 				contenteditable="true"
-				use:form={{ 
-				 	validateEvent: 'input', 
-					validations: ['required'], 
-					name: 'story', 
-					html: true 
+				use:form={{
+				 	validateEvent: 'input',
+					validations: ['required'],
+					name: 'story',
+					html: true
 				}}
 			></div>
 			{#if errors.story}

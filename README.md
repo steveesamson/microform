@@ -31,7 +31,8 @@ import uform  from "@steveesamson/microform";
 let defaultData:any = $props();
 
 // Instatiate microform
-const { form, values, errors, submit, sanity } = uform({
+// const { form, values, errors, submit, sanity } = uform({
+const { form, values, errors, submit, sanity, setValue, setError } = uform({
     // Set default form data
     data:{...defaultData},
     // Set a global event for validation, can be overriden on a each field.
@@ -63,6 +64,8 @@ On the instantiation of `microform`, we have access to:
 - `sanity`, a `FormSanity`, which tells us if a form is clean/without errors by it's `ok` property.
 - `reset`, a function to reset form
 - `onsubmit`, a function to handle form submission.
+- `setValue`, a function to mutate state in order to avoid `ownership_invalid_mutation` errors, especially, when values is fed as props to other components that intend to mutate `values` states.
+- `setError`, is a function introduced for the same reason `setValue` was added; it give privileges to components authored on `microform` that may mutate the `errors` state.
 
 ### In the view Html
 
@@ -70,11 +73,11 @@ On the instantiation of `microform`, we have access to:
     <form use:submit={onSubmit}>
         <label for="fullname">
 			Name:
-			<input 
-			type="text" 
-			name="fullname" 
-			id="fullname" 
-			use:form={{ validations: ['required'] }} 
+			<input
+			type="text"
+			name="fullname"
+			id="fullname"
+			use:form={{ validations: ['required'] }}
 			/>
 			{#if errors.fullname}
 				<small>{errors.fullname}</small>
@@ -82,11 +85,11 @@ On the instantiation of `microform`, we have access to:
 		</label>
 		<label for="dob">
 			DOB:
-			<input 
-			type="date" 
-			name="dob" 
-			id="dob" 
-			use:form={{ validations: ['required'] }} 
+			<input
+			type="date"
+			name="dob"
+			id="dob"
+			use:form={{ validations: ['required'] }}
 			/>
 			{#if errors.dob}
 				<small>{errors.dob}</small>
@@ -149,9 +152,9 @@ On the instantiation of `microform`, we have access to:
 				type="file"
 				name="resume"
 				id="resume"
-				use:form={{ 
-					validateEvent:'change', 
-					validations: ['required', 'file-size-mb:3'] 
+				use:form={{
+					validateEvent:'change',
+					validations: ['required', 'file-size-mb:3']
 				}}
 			/>
 			{#if errors.resume}
@@ -160,9 +163,9 @@ On the instantiation of `microform`, we have access to:
 		</label>
 		<label for="comment">
 			Comment:
-			<textarea 
-			name="comment" 
-			id="comment" 
+			<textarea
+			name="comment"
+			id="comment"
 			use:form={{ validations: ['required'] }}
 			></textarea>
 			{#if errors.comment}
@@ -209,11 +212,11 @@ On the instantiation of `microform`, we have access to:
 			Story:
 			<div
 				contenteditable="true"
-				use:form={{ 
-				 	validateEvent: 'input', 
-					validations: ['required'], 
-					name: 'story', 
-					html: true 
+				use:form={{
+				 	validateEvent: 'input',
+					validations: ['required'],
+					name: 'story',
+					html: true
 				}}
 			></div>
 			{#if errors.story}
@@ -235,10 +238,10 @@ While the above example uses the `submit` action of `microform`, form could also
 <form>
 	<label for="password">
 		Password:
-		<input 
-            type="text" 
-            name="password" 
-            id="password" 
+		<input
+            type="text"
+            name="password"
+            id="password"
             use:form={{
 				validations: ['required']
             }}
@@ -254,7 +257,7 @@ While the above example uses the `submit` action of `microform`, form could also
 			name="confirm_password"
 			id="confirm_password"
 			use:form={{
-				validations: ['required','match:password'], 
+				validations: ['required','match:password'],
             }}
 		/>
 		{#if errors.confirm_password}
@@ -297,10 +300,7 @@ While the above example uses the `submit` action of `microform`, form could also
 You need not bind the `values` to your fields except when there is a definite need for it as `form` will coordinate all value changes based on the `data` passed at instantiation, if any. Therefore, constructs like the following might not be neccessary:
 
 ```html
-<input
-    ...
-	value="{values.email_account}"
-/>
+<input ... value="{values.email_account}" />
 ```
 
 ### 1. Validations
@@ -395,9 +395,11 @@ Finally, the validations can be combined to form a complex graph of validations 
 ```
 
 # Overriding validators
+
 Validators could be overriden to provide custom validation and/or messages besides the default ones. For instance, let us overide the `len` validation rule. Every non-empty string/message returned from a validator's call becomes the error to be displayed to the user; and it shows up in the `errors` keyed by the field name.
 
 ### Approach 1
+
 ```ts
 <script>
 import uform, { type FieldProps } from "@steveesamson/microform";
@@ -427,7 +429,9 @@ const { form, values, errors, submit, sanity } = uform({
 });
 </script>
 ```
+
 Instead of using the literal validation keys like `len`, `required` etc., while overriding validators, the exported key namee could be used. The key names are:
+
 - IS_REQUIRED = `required`
 - IS_EMAIL = `email`
 - IS_URL = `url`
@@ -447,6 +451,7 @@ Instead of using the literal validation keys like `len`, `required` etc., while 
 Therefore, the following is equivalent to the configuration in `Approach 1`:
 
 ### Approach 2
+
 ```ts
 <script>
 import uform, { type FieldProps, IS_LEN } from "@steveesamson/microform";

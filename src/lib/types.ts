@@ -1,18 +1,33 @@
 import { type Writable } from "svelte/store";
 import type { Params } from "./internal.js";
 
-export type Validator =  `max:${number}` | `min:${number}` | `len:${number}` | `minlen:${number}` | `maxlen:${number}` | `file-size-mb:${number}` | `match:${string}` | 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip' ;
-export type ValidatorKey =  'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip' | `max` | `min` | `len` | `minlen` | `maxlen` | `file-size-mb` | `match`;
+<<<<<<< HEAD
+export type Validator = `max:${number}` | `min:${number}` | `len:${number}` | `minlen:${number}` | `maxlen:${number}` | `file-size-mb:${number}` | `match:${string}` | 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip';
+export type ValidatorKey = 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip' | `max` | `min` | `len` | `minlen` | `maxlen` | `file-size-mb` | `match`;
 
 export type FieldProps = {
-    name:string;
-    value:string;
-    label:string;
-    node?:HTMLElement;
-    values:Params;
-    parts?:string[];
+	name: string;
+	value: string;
+	label: string;
+	node?: HTMLElement;
+	values: Params;
+	parts?: string[];
 }
-export type ValidatorType = (props:FieldProps) => string;
+export type ValidatorType = (props: FieldProps) => string;
+=======
+export type Validator = `max:${number}` | `min:${number}` | `len:${number}` | `minlen:${number}` | `maxlen:${number}` | `file-size-mb:${number}` | `match:${string}` | 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip';
+export type ValidatorKey = 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip' | `max` | `min` | `len` | `minlen` | `maxlen` | `file-size-mb` | `match`;
+
+export type FieldProps = {
+	name: string;
+	value: string;
+	label: string;
+	node?: HTMLElement;
+	values: Params;
+	parts?: string[];
+}
+export type ValidatorType = (props: FieldProps) => string;
+>>>>>>> 9ebf6f2 (add setValue and setError to allow values/errors mutation in other components)
 export type ValidatorMap<T> = { [VAL in ValidatorKey]: T };
 export type InputTypes = 'text' | 'number' | 'color' | 'time' | 'date' | 'range' | 'email' | 'hidden' | 'password' | 'tel' | 'url';
 export type FieldType = HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement;
@@ -55,7 +70,7 @@ export type FormSubmit = (_data: Params) => void;
 
 export type FormOptions = {
 	validateEvent?: ValidateEvent;
-	validators?:Partial<ValidatorMap<ValidatorType>>;
+	validators?: Partial<ValidatorMap<ValidatorType>>;
 }
 
 export type MicroFormProps = {
@@ -63,7 +78,7 @@ export type MicroFormProps = {
 	options?: FormOptions
 }
 export type FormSanity = {
-	ok:boolean;
+	ok: boolean;
 };
 export type MicroFormReturn = {
 	values: FormValues;
@@ -73,5 +88,7 @@ export type MicroFormReturn = {
 	submit: (formNode: HTMLFormElement, handler: FormSubmit) => void;
 	onsubmit: (handler: FormSubmit) => (e: Event) => Promise<void>;
 	reset: () => void;
+	setValue: (key: string, value: unknown) => void;
+	setError: (key: string, value: unknown) => void;
 }
-export type Microform =  (props?: MicroFormProps) => MicroFormReturn;
+export type Microform = (props?: MicroFormProps) => MicroFormReturn;

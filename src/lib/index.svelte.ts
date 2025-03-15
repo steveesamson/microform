@@ -4,7 +4,11 @@ import type { FormErrors, FormSanity, FormSubmit, FormValues, Microform, MicroFo
 import type { Params } from './internal.js';
 import { bindStateToStore } from "./utils.js";
 
-const microform:Microform = (props?: MicroFormProps): MicroFormReturn => {
+<<<<<<< HEAD
+const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
+=======
+const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
+>>>>>>> 9ebf6f2 (add setValue and setError to allow values/errors mutation in other components)
     // form default values
     const data = props?.data || {};
     // form values
@@ -34,7 +38,11 @@ const microform:Microform = (props?: MicroFormProps): MicroFormReturn => {
         }
     } = props || {};
 
-    const form  = formAction(_values, _errors, unfits, isdirty, options, validationMap);
+<<<<<<< HEAD
+    const form = formAction(_values, _errors, unfits, isdirty, options, validationMap);
+=======
+    const form = formAction(_values, _errors, unfits, isdirty, options, validationMap);
+>>>>>>> 9ebf6f2 (add setValue and setError to allow values/errors mutation in other components)
 
     const handleSubmit = (e: Event, handler: FormSubmit) => {
         e.preventDefault();
@@ -75,8 +83,13 @@ const microform:Microform = (props?: MicroFormProps): MicroFormReturn => {
 
     const values: FormValues = $state<FormValues>({ ...data });
     const errors: FormErrors = $state<FormValues>({});
-    const sanity: FormSanity = $state<FormSanity>({ok:get(_valid)});
-    
+    const sanity: FormSanity = $state<FormSanity>({ ok: get(_valid) });
+    const setValue = (field: string, value: unknown) => {
+        values[field] = value;
+    }
+    const setError = (field: string, value: unknown) => {
+        errors[field] = value;
+    }
     bindStateToStore(values, _values);
     bindStateToStore(errors, _errors);
     _valid.subscribe((changes: boolean) => {
@@ -91,6 +104,8 @@ const microform:Microform = (props?: MicroFormProps): MicroFormReturn => {
         submit,
         onsubmit,
         reset,
+        setError,
+        setValue
     };
 };
 export default microform;
