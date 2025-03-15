@@ -96,17 +96,17 @@ export const formAction = (values: Writable<Params>, errors: Writable<Params>, u
             else if (isCheckbox(node)) {
                 const { checked, value: val } = node as HTMLInputElement;
                 const { [name]: fieldValue } = get(values);
-                let current: string[] = fieldValue;
+                let current = fieldValue.split(',');
                 if (checked) {
                     current.push(val);
                 } else {
                     current = current.filter((next: string) => next !== val);
                 }
                 values.update((data: Params) => {
-                    return { ...data, [name]: [...new Set(current)] };
+                    return { ...data, [name]: [...new Set(current)].join(',') };
                 });
 
-            }else if (isRadio(node)) {
+            } else if (isRadio(node)) {
                 const { value: fvalue } = node as HTMLInputElement;
                 values.update((data: Params) => {
                     return { ...data, [name]: fvalue };

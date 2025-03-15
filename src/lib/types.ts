@@ -73,7 +73,5 @@ export type MicroFormReturn = {
 	submit: (formNode: HTMLFormElement, handler: FormSubmit) => void;
 	onsubmit: (handler: FormSubmit) => (e: Event) => Promise<void>;
 	reset: () => void;
-	setValue: (key: string, value: unknown) => void;
-	setError: (key: string, value: unknown) => void;
 }
 export type Microform = (props?: MicroFormProps) => MicroFormReturn;
