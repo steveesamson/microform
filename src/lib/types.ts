@@ -1,7 +1,6 @@
 import { type Writable } from "svelte/store";
 import type { Params } from "./internal.js";
 
-<<<<<<< HEAD
 export type Validator = `max:${number}` | `min:${number}` | `len:${number}` | `minlen:${number}` | `maxlen:${number}` | `file-size-mb:${number}` | `match:${string}` | 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip';
 export type ValidatorKey = 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip' | `max` | `min` | `len` | `minlen` | `maxlen` | `file-size-mb` | `match`;
 
@@ -14,20 +13,6 @@ export type FieldProps = {
 	parts?: string[];
 }
 export type ValidatorType = (props: FieldProps) => string;
-=======
-export type Validator = `max:${number}` | `min:${number}` | `len:${number}` | `minlen:${number}` | `maxlen:${number}` | `file-size-mb:${number}` | `match:${string}` | 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip';
-export type ValidatorKey = 'required' | 'email' | 'integer' | 'number' | 'alpha' | 'alphanum' | 'url' | 'ip' | `max` | `min` | `len` | `minlen` | `maxlen` | `file-size-mb` | `match`;
-
-export type FieldProps = {
-	name: string;
-	value: string;
-	label: string;
-	node?: HTMLElement;
-	values: Params;
-	parts?: string[];
-}
-export type ValidatorType = (props: FieldProps) => string;
->>>>>>> 9ebf6f2 (add setValue and setError to allow values/errors mutation in other components)
 export type ValidatorMap<T> = { [VAL in ValidatorKey]: T };
 export type InputTypes = 'text' | 'number' | 'color' | 'time' | 'date' | 'range' | 'email' | 'hidden' | 'password' | 'tel' | 'url';
 export type FieldType = HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement;
