@@ -1,9 +1,6 @@
 import { formAction } from './form-action.svelte.js';
 import type {
-	// FormErrors,
-	// FormSanity,
 	FormSubmit,
-	// FormValues,
 	Microform,
 	MicroFormProps,
 	MicroFormReturn,

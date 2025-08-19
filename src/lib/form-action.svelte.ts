@@ -60,7 +60,6 @@ export const formAction = (
 			validators[key as ValidatorKey] = val;
 		}
 	}
-	// let isDirty = $state(false);
 	const hasError = (next: string) => !!next;
 	return (node: HTMLElement, eventProps?: ActionOptions) => {
 		const nodeName = isField(node) ? node.name : '';
@@ -116,33 +115,16 @@ export const formAction = (
 			const { validate: validateUnfit } = useValidator(unfits, values, validators);
 
 			checkFormFitness(values, validationMap, validateUnfit);
-			// isDirty = true;
 			validate({ name, value: values[name], validations, node });
-			const hasChanged = true;
 
 			const withErrors = Object.values(errors).some(hasError);
 			const withUnfits = Object.values(unfits).some(hasError);
 			const clean = !withErrors && !withUnfits;
-			reportDirty(clean && hasChanged);
+			reportDirty(clean);
 
 		};
 
-
-
-		// $effect(() => {
-		// 	if (eventBound) {
-		// 		const withErrors = Object.values(errors).some(hasError);
-		// 		const withUnfits = Object.values(unfits).some(hasError);
-		// 		const clean = !withErrors && !withUnfits;
-		// 		reportDirty(clean, isDirty);
-		// 		console.log({ clean, isDirty })
-		// 	}
-		// })
-
 		$effect(() => {
-			// if (eventBound) {
-			// 	validate({ name, value: values[name], validations, node });
-			// }
 			node.addEventListener(validateEvent, updateNode);
 
 			return () => {

@@ -12,8 +12,7 @@
 			comment: 'I shall.',
 			story: '<p>It is a story</p>',
 			fullname: 'Steve Samson',
-			password: 'some-top-dark-secret',
-			gender: 'M'
+			password: 'some-top-dark-secret'
 		},
 		options: {
 			validateEvent: 'input'
@@ -109,7 +108,7 @@
 				<small>{errors.email}</small>
 			{/if}
 		</label>
-		<!-- <label for="resume">
+		<label for="resume">
 			Resume:
 			<input
 				type="file"
@@ -123,7 +122,7 @@
 			{#if errors.resume}
 				<small>{errors.resume}</small>
 			{/if}
-		</label> -->
+		</label>
 		<label for="comment">
 			Comment:
 			<textarea name="comment" id="comment" use:form={{ validations: ['required'] }}></textarea>
