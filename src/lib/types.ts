@@ -1,5 +1,5 @@
-import { type Writable } from 'svelte/store';
-import type { Params } from './internal.js';
+// import { type Writable } from 'svelte/store';
+import type { Params } from './internal.svelte.js';
 
 export type Validator =
 	| `max:${number}`
@@ -74,7 +74,7 @@ export type ValidateEvent = 'input' | 'change' | 'keyup' | 'blur' | 'keydown';
 
 export type FormValues = Params;
 export type FormErrors = Params;
-export type Dirty = Writable<boolean>;
+export type Dirty = boolean;//Writable<boolean>;
 
 export type ActionOptions = {
 	validateEvent?: ValidateEvent;
@@ -84,7 +84,7 @@ export type ActionOptions = {
 	html?: boolean;
 };
 
-export type FormAction = (node: HTMLElement, eventProps?: ActionOptions) => FormReturn;
+export type FormAction = (node: HTMLElement, eventProps?: ActionOptions) => void;
 
 export type FormSubmitEvent = SubmitEvent & {
 	currentTarget: EventTarget & HTMLFormElement;
@@ -107,7 +107,7 @@ export type MicroFormReturn = {
 	values: FormValues;
 	errors: FormErrors;
 	sanity: FormSanity;
-	form: (node: HTMLElement, eventProps?: ActionOptions) => FormReturn;
+	form: (node: HTMLElement, eventProps?: ActionOptions) => void;
 	submit: (formNode: HTMLFormElement, handler: FormSubmit) => void;
 	onsubmit: (handler: FormSubmit) => (e: Event) => Promise<void>;
 	reset: () => void;

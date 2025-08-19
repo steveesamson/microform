@@ -1,4 +1,3 @@
-import { type Writable, get } from 'svelte/store';
 import { useValidator } from './form-validators.js';
 import { getEditableContent } from './utils.js';
 import type {
@@ -6,13 +5,14 @@ import type {
 	FieldType,
 	FormOptions,
 	InputType,
-	FormReturn,
 	FormAction,
 	ValidateArgs,
-	ValidatorKey
+	ValidatorKey,
+	FormValues,
+	FormErrors
 } from './types.js';
 
-import type { Params } from './internal.js';
+import type { Params } from './internal.svelte.js';
 
 const isField = (node: unknown): node is FieldType => {
 	return (
@@ -34,21 +34,20 @@ const isRadio = (node: unknown) => {
 };
 
 const checkFormFitness = (
-	values: Writable<Params>,
+	values: FormValues,
 	validationMap: Params,
 	validate: (vargs: ValidateArgs) => Promise<void>
 ) => {
-	const _values = get(values);
 	for (const [name, { validations }] of Object.entries(validationMap)) {
-		validate({ name, value: _values[name], validations });
+		validate({ name, value: values[name], validations });
 	}
 };
 
 export const formAction = (
-	values: Writable<Params>,
-	errors: Writable<Params>,
-	unfits: Writable<Params>,
-	isdirty: Writable<boolean>,
+	values: FormValues,
+	errors: FormErrors,
+	unfits: FormErrors,
+	reportDirty: (clean: boolean) => void,
 	options: FormOptions,
 	validationMap: Params
 ): FormAction => {
@@ -61,8 +60,9 @@ export const formAction = (
 			validators[key as ValidatorKey] = val;
 		}
 	}
-
-	return (node: HTMLElement, eventProps?: ActionOptions): FormReturn => {
+	// let isDirty = $state(false);
+	const hasError = (next: string) => !!next;
+	return (node: HTMLElement, eventProps?: ActionOptions) => {
 		const nodeName = isField(node) ? node.name : '';
 		const { name: dsname = nodeName } = node.dataset || {};
 		const {
@@ -73,7 +73,7 @@ export const formAction = (
 		} = eventProps || {};
 		validationMap[name] = { validations, html, nodeRef: node };
 
-		const storedValue = get(values)[name] || '';
+		const storedValue = values[name] || '';
 		let defValue = storedValue;
 
 		if (isField(node) && !isExcluded(node)) {
@@ -83,62 +83,71 @@ export const formAction = (
 			defValue = node.innerHTML || storedValue;
 			node.innerHTML = defValue;
 		}
+		values[name] = defValue;
 
-		values.update((data: Params) => {
-			return { ...data, [name]: defValue };
-		});
-
-		let unsubscribe: () => void;
-
+		let eventBound = $state(false);
 		const updateNode = (e: Event) => {
-			if (!unsubscribe) {
-				unsubscribe = values.subscribe((data: Params) => {
-					validate({ name, value: data[name], validations, node });
-				});
+			if (!eventBound) {
+				eventBound = true;
 			}
 
 			if (isField(node) && !isExcluded(node)) {
 				const value = (e.target as InputType).value || '';
-				values.update((data: Params) => {
-					return { ...data, [name]: value };
-				});
+				values[name] = value;
 			} else if (node.isContentEditable) {
 				const { value: htm, text } = getEditableContent({ target: node }, html);
-				values.update((data: Params) => {
-					return { ...data, [name]: htm, [`${name}-text`]: text };
-				});
+				values[name] = htm;
+				values[`${name}-text`] = text;
 			} else if (isCheckbox(node)) {
 				const { checked, value: val } = node as HTMLInputElement;
-				const { [name]: fieldValue } = get(values);
-				let current = fieldValue.split(',');
+				const fieldValue: string = String(values[name] ?? '');
+				let current = fieldValue?.split(',');
 				if (checked) {
 					current.push(val);
 				} else {
 					current = current.filter((next: string) => next !== val);
 				}
-				values.update((data: Params) => {
-					return { ...data, [name]: [...new Set(current)].join(',') };
-				});
+				values[name] = [...new Set(current)].join(',');
 			} else if (isRadio(node)) {
 				const { value: fvalue } = node as HTMLInputElement;
-				values.update((data: Params) => {
-					return { ...data, [name]: fvalue };
-				});
+				values[name] = fvalue;
 			}
 
 			const { validate: validateUnfit } = useValidator(unfits, values, validators);
 
 			checkFormFitness(values, validationMap, validateUnfit);
+			// isDirty = true;
+			validate({ name, value: values[name], validations, node });
+			const hasChanged = true;
 
-			isdirty.set(true);
+			const withErrors = Object.values(errors).some(hasError);
+			const withUnfits = Object.values(unfits).some(hasError);
+			const clean = !withErrors && !withUnfits;
+			reportDirty(clean && hasChanged);
+
 		};
-		node.addEventListener(validateEvent, updateNode);
 
-		return {
-			destroy() {
-				unsubscribe?.();
+
+
+		// $effect(() => {
+		// 	if (eventBound) {
+		// 		const withErrors = Object.values(errors).some(hasError);
+		// 		const withUnfits = Object.values(unfits).some(hasError);
+		// 		const clean = !withErrors && !withUnfits;
+		// 		reportDirty(clean, isDirty);
+		// 		console.log({ clean, isDirty })
+		// 	}
+		// })
+
+		$effect(() => {
+			// if (eventBound) {
+			// 	validate({ name, value: values[name], validations, node });
+			// }
+			node.addEventListener(validateEvent, updateNode);
+
+			return () => {
 				node.removeEventListener(validateEvent, updateNode);
 			}
-		};
+		})
 	};
 };

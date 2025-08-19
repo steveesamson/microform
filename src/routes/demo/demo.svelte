@@ -1,6 +1,6 @@
 <script lang="ts">
 	import uform from '$lib/index.js';
-	import type { Params } from '$lib/internal.js';
+	import type { Params } from '$lib/internal.svelte.js';
 
 	let { form, values, sanity, errors, submit, reset } = uform({
 		data: {
@@ -12,7 +12,8 @@
 			comment: 'I shall.',
 			story: '<p>It is a story</p>',
 			fullname: 'Steve Samson',
-			password: 'some-top-dark-secret'
+			password: 'some-top-dark-secret',
+			gender: 'M'
 		},
 		options: {
 			validateEvent: 'input'
@@ -108,7 +109,7 @@
 				<small>{errors.email}</small>
 			{/if}
 		</label>
-		<label for="resume">
+		<!-- <label for="resume">
 			Resume:
 			<input
 				type="file"
@@ -122,7 +123,7 @@
 			{#if errors.resume}
 				<small>{errors.resume}</small>
 			{/if}
-		</label>
+		</label> -->
 		<label for="comment">
 			Comment:
 			<textarea name="comment" id="comment" use:form={{ validations: ['required'] }}></textarea>
