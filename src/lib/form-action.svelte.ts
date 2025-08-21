@@ -9,7 +9,8 @@ import type {
 	ValidateArgs,
 	ValidatorKey,
 	FormValues,
-	FormErrors
+	FormErrors,
+	FormSanity
 } from './types.js';
 
 import type { Params } from './internal.svelte.js';
@@ -47,7 +48,7 @@ export const formAction = (
 	values: FormValues,
 	errors: FormErrors,
 	unfits: FormErrors,
-	reportDirty: (clean: boolean) => void,
+	sanity: FormSanity,
 	options: FormOptions,
 	validationMap: Params
 ): FormAction => {
@@ -60,7 +61,9 @@ export const formAction = (
 			validators[key as ValidatorKey] = val;
 		}
 	}
+
 	const hasError = (next: string) => !!next;
+
 	return (node: HTMLElement, eventProps?: ActionOptions) => {
 		const nodeName = isField(node) ? node.name : '';
 		const { name: dsname = nodeName } = node.dataset || {};
@@ -84,12 +87,7 @@ export const formAction = (
 		}
 		values[name] = defValue;
 
-		let eventBound = $state(false);
 		const updateNode = (e: Event) => {
-			if (!eventBound) {
-				eventBound = true;
-			}
-
 			if (isField(node) && !isExcluded(node)) {
 				const value = (e.target as InputType).value || '';
 				values[name] = value;
@@ -112,21 +110,20 @@ export const formAction = (
 				values[name] = fvalue;
 			}
 
-			const { validate: validateUnfit } = useValidator(unfits, values, validators);
-
-			checkFormFitness(values, validationMap, validateUnfit);
 			validate({ name, value: values[name], validations, node });
+		};
 
+
+		$effect(() => {
+			const { validate: validateUnfit } = useValidator(unfits, values, validators);
+			checkFormFitness(values, validationMap, validateUnfit);
 			const withErrors = Object.values(errors).some(hasError);
 			const withUnfits = Object.values(unfits).some(hasError);
-			const clean = !withErrors && !withUnfits;
-			reportDirty(clean);
-
-		};
+			sanity.ok = !withErrors && !withUnfits;
+		})
 
 		$effect(() => {
 			node.addEventListener(validateEvent, updateNode);
-
 			return () => {
 				node.removeEventListener(validateEvent, updateNode);
 			}

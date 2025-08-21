@@ -8,6 +8,7 @@ import type {
 	ValidatorType
 } from './types.js';
 import { formState, type Params } from './internal.svelte.js';
+import { resetObject } from './utils.js';
 
 const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
 	// form default values
@@ -23,10 +24,7 @@ const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
 		}
 	} = props || {};
 
-	const updateSanity = (isOk: boolean) => {
-		state.sanity.ok = isOk;
-	};
-	const form = formAction(state.values, state.errors, state.unfits, updateSanity, options, validationMap);
+	const form = formAction(state.values, state.errors, state.unfits, state.sanity, options, validationMap);
 
 	const handleSubmit = (e: Event, handler: FormSubmit) => {
 		e.preventDefault();
@@ -36,29 +34,27 @@ const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
 	};
 
 	const onsubmit = (handler: FormSubmit) => {
-		const onSubmit = async (e: Event) => {
+		return (e: Event) => {
 			handleSubmit(e, handler);
 		};
-		return onSubmit;
 	};
 
 	const submit = (formNode: HTMLFormElement, handler: FormSubmit) => {
-		formNode.addEventListener('submit', (e: SubmitEvent) => {
-			handleSubmit(e, handler);
-		});
+
+		$effect(() => {
+			const localHandler = (e: SubmitEvent) => {
+				handleSubmit(e, handler);
+			};
+			formNode.addEventListener('submit', localHandler);
+			return () => formNode.removeEventListener('submit', localHandler);
+		})
+
 	};
 
 	const reset = () => {
-		const defaultKeys = Object.keys({ ...data });
-		for (const [key,] of Object.entries(state.values)) {
-			if (defaultKeys.includes(key)) {
-				state.values[key] = data[key];
-			} else {
-				delete state.values[key];
-			}
-		}
-		state.errors = {};
-		state.unfits = {};
+		resetObject(state.values, data);
+		resetObject(state.errors);
+		resetObject(state.unfits);
 		state.sanity.ok = false;
 
 		for (const [name, { nodeRef, html }] of Object.entries(validationMap).filter(

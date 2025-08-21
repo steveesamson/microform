@@ -89,7 +89,7 @@ export type FormAction = (node: HTMLElement, eventProps?: ActionOptions) => void
 export type FormSubmitEvent = SubmitEvent & {
 	currentTarget: EventTarget & HTMLFormElement;
 };
-export type FormSubmit = (_data: Params) => void;
+export type FormSubmit = (_data: Params) => (void | Promise<void>);
 
 export type FormOptions = {
 	validateEvent?: ValidateEvent;
@@ -109,7 +109,7 @@ export type MicroFormReturn = {
 	sanity: FormSanity;
 	form: (node: HTMLElement, eventProps?: ActionOptions) => void;
 	submit: (formNode: HTMLFormElement, handler: FormSubmit) => void;
-	onsubmit: (handler: FormSubmit) => (e: Event) => Promise<void>;
+	onsubmit: (handler: FormSubmit) => (e: Event) => void;
 	reset: () => void;
 };
 export type Microform = (props?: MicroFormProps) => MicroFormReturn;

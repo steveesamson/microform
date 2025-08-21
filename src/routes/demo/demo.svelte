@@ -86,6 +86,7 @@
 			<select
 				name="gender"
 				id="gender"
+				value={values['gender']}
 				use:form={{ validateEvent: 'change', validations: ['required'] }}
 			>
 				<option value="">Select gender</option>
@@ -178,6 +179,12 @@
 		</label>
 		<section>
 			<button type="submit" disabled={!sanity.ok}>Submit</button>
+			<button
+				type="button"
+				onclick={() => {
+					values['gender'] = values['gender'] === 'M' ? 'F' : 'M';
+				}}>Toggle gender</button
+			>
 			<button type="button" onclick={reset}> Reset </button>
 		</section>
 	</div>
@@ -233,11 +240,15 @@
 	}
 
 	button[type='submit'] {
-		color: tomato;
+		color: white;
 		border-color: tomato;
+		background-color: tomato;
 	}
 
-	button:disabled {
+	button[type='submit']:disabled {
+		border: 1px solid #ddd;
+		background-color: #efefef;
+		color: #888;
 		filter: brightness(85%);
 		cursor: not-allowed;
 	}
