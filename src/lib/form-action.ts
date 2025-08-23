@@ -1,15 +1,16 @@
 import { type Writable, get } from 'svelte/store';
 import { useValidator } from './form-validators.js';
-import { getEditableContent } from './utils.js';
+import { debounce, getEditableContent } from './utils.js';
 import type {
 	ActionOptions,
 	FieldType,
 	FormOptions,
 	InputType,
-	FormReturn,
 	FormAction,
 	ValidateArgs,
-	ValidatorKey
+	ValidatorKey,
+	FormValues,
+	FormErrors
 } from './types.js';
 
 import type { Params } from './internal.js';
@@ -45,10 +46,10 @@ const checkFormFitness = (
 };
 
 export const formAction = (
-	values: Writable<Params>,
-	errors: Writable<Params>,
-	unfits: Writable<Params>,
-	isdirty: Writable<boolean>,
+	values: FormValues,
+	errors: FormErrors,
+	unfits: FormErrors,
+	onSanity: (sanity: boolean) => void,
 	options: FormOptions,
 	validationMap: Params
 ): FormAction => {
@@ -62,7 +63,31 @@ export const formAction = (
 		}
 	}
 
-	return (node: HTMLElement, eventProps?: ActionOptions): FormReturn => {
+	const hasError = (next: string) => !!next;
+	let canWatch = false;// $state(false);
+	const evaluateSanity = () => {
+		const { validate: validateUnfit } = useValidator(unfits, values, validators);
+		checkFormFitness(values, validationMap, validateUnfit);
+		const withErrors = Object.values(errors).some(hasError);
+		const withUnfits = Object.values(unfits).some(hasError);
+		onSanity(!withErrors && !withUnfits && canWatch);
+	}
+	$effect(() => {
+		if (options.debug) {
+			console.log('values changed...')
+		}
+		Object.values(values);
+		evaluateSanity();
+	})
+	const start = debounce(() => {
+		canWatch = true;
+		if (options.debug) {
+			console.log('microform initialized...')
+		}
+	}, options.fieldWaitTimeInMilliSecond!)
+
+	return (node: HTMLElement, eventProps?: ActionOptions) => {
+		start();
 		const nodeName = isField(node) ? node.name : '';
 		const { name: dsname = nodeName } = node.dataset || {};
 		const {
@@ -126,17 +151,13 @@ export const formAction = (
 				});
 			}
 
-			const { validate: validateUnfit } = useValidator(unfits, values, validators);
-
-			checkFormFitness(values, validationMap, validateUnfit);
-
-			isdirty.set(true);
+			validate({ name, value: values[name], validations, node });
 		};
-		node.addEventListener(validateEvent, updateNode);
 
-		return {
-			destroy() {
-				unsubscribe?.();
+
+		$effect(() => {
+			node.addEventListener(validateEvent, updateNode);
+			return () => {
 				node.removeEventListener(validateEvent, updateNode);
 			}
 		};

@@ -94,6 +94,9 @@ export type FormSubmit = (_data: Params) => void;
 export type FormOptions = {
 	validateEvent?: ValidateEvent;
 	validators?: Partial<ValidatorMap<ValidatorType>>;
+	fieldWaitTimeInMilliSecond?: number;
+	debug?: boolean;
+
 };
 
 export type MicroFormProps = {

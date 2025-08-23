@@ -1,5 +1,3 @@
-import type { Writable } from 'svelte/store';
-import type { Params } from './internal.js';
 
 type TEvent = {
 	target: HTMLElement;
@@ -55,10 +53,12 @@ export const isValidFileSize = (node: HTMLInputElement | undefined, maxFileSizeI
 	return '';
 };
 
-export const bindStateToStore = (state: Params, store: Writable<Params>): void => {
-	store.subscribe((changes: Params) => {
-		for (const [k, v] of Object.entries(changes)) {
-			state[k] = v;
-		}
-	});
-};
+
+export const debounce = (func: (...args?: any) => any, delay: number = 1000) => {
+	let timeoutId: ReturnType<typeof setTimeout>;
+	return function (...par?: any) {
+		const context = this;
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => func.apply(context, par), delay);
+	};
+}
