@@ -1,4 +1,3 @@
-import { formAction } from './form-action.js';
 import type {
 	FormOptions,
 	FormSubmit,
@@ -9,6 +8,7 @@ import type {
 	ValidatorType
 } from './types.js';
 import { formStore } from './internal.svelte.js';
+import { formAction } from './form-action.svelte.js';
 
 const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
 	// form default values
@@ -37,16 +37,21 @@ const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
 	};
 
 	const onsubmit = (handler: FormSubmit) => {
-		const onSubmit = async (e: Event) => {
+		return (e: Event) => {
 			handleSubmit(e, handler);
 		};
-		return onSubmit;
 	};
 
 	const submit = (formNode: HTMLFormElement, handler: FormSubmit) => {
-		formNode.addEventListener('submit', (e: SubmitEvent) => {
-			handleSubmit(e, handler);
-		});
+
+		$effect(() => {
+			const localHandler = (e: SubmitEvent) => {
+				handleSubmit(e, handler);
+			};
+			formNode.addEventListener('submit', localHandler);
+			return () => formNode.removeEventListener('submit', localHandler);
+		})
+
 	};
 
 	return {

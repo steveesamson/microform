@@ -1,14 +1,14 @@
-import { get, type Writable } from 'svelte/store';
 import type {
 	FieldProps,
 	ValidateArgs,
 	ValidatorType,
 	ValidatorMap,
 	ValidatorKey,
-	Validator
+	Validator,
+	FormErrors,
+	FormValues
 } from './types.js';
 import { makeName, isValidFileSize } from './utils.js';
-import type { Params } from './internal.js';
 
 const regexes = {
 	number: /^[-+]?[0-9]+(\.[0-9]+)?$/g,
@@ -73,7 +73,7 @@ const getDefaultValidators = (): ValidatorMap<ValidatorType> => {
 				: '';
 		},
 		[IS_MIN_LEN]: ({ value, label, parts }: FieldProps) => {
-			if (!!value) {
+			if (value) {
 				if (!parts || parts.length < 2) {
 					return `${label}: min-length validation requires minimum length.`;
 				}
@@ -86,7 +86,7 @@ const getDefaultValidators = (): ValidatorMap<ValidatorType> => {
 			return '';
 		},
 		[IS_MAX_LEN]: ({ value, label, parts }: FieldProps) => {
-			if (!!value) {
+			if (value) {
 				if (!parts || parts.length < 2) {
 					return `${label}: max-length validation requires maximum length.`;
 				}
@@ -98,7 +98,7 @@ const getDefaultValidators = (): ValidatorMap<ValidatorType> => {
 			return '';
 		},
 		[IS_LEN]: ({ value, label, parts }: FieldProps) => {
-			if (!!value) {
+			if (value) {
 				if (!parts || parts.length < 2) {
 					return `${label}: length validation requires length.`;
 				}
@@ -110,7 +110,7 @@ const getDefaultValidators = (): ValidatorMap<ValidatorType> => {
 			return '';
 		},
 		[IS_MAX]: ({ value, label, parts }: FieldProps) => {
-			if (!!value) {
+			if (value) {
 				if (!parts || parts.length < 2) {
 					return `${label}: max validation requires the maximum value.`;
 				}
@@ -122,7 +122,7 @@ const getDefaultValidators = (): ValidatorMap<ValidatorType> => {
 			return '';
 		},
 		[IS_MIN]: ({ value, label, parts }: FieldProps) => {
-			if (!!value) {
+			if (value) {
 				if (!parts || parts.length < 2) {
 					return `${label}: min validation requires the minimum value.`;
 				}
@@ -145,7 +145,7 @@ const getDefaultValidators = (): ValidatorMap<ValidatorType> => {
 			return '';
 		},
 		[IS_FILE_SIZE_MB]: ({ value, node, label, parts }: FieldProps) => {
-			if (!!value) {
+			if (value) {
 				if (!parts || parts.length < 2) {
 					return `${label}: max file size in MB validation requires maximum file size of mb value.`;
 				}
@@ -159,14 +159,13 @@ const getDefaultValidators = (): ValidatorMap<ValidatorType> => {
 };
 
 export const useValidator = (
-	errors: Writable<Params>,
-	values: Writable<Params>,
+	errors: FormErrors,
+	values: FormValues,
 	validators: ValidatorMap<ValidatorType> = getDefaultValidators()
 ) => {
+
 	const setError = (name: string, error: string) => {
-		errors.update((prev: Params) => {
-			return { ...prev, [name]: error };
-		});
+		errors[name] = error ?? '';
 	};
 
 	return {
@@ -188,7 +187,7 @@ export const useValidator = (
 						name,
 						label: makeName(name),
 						value,
-						values: get(values),
+						values,
 						node,
 						parts
 					});

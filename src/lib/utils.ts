@@ -1,3 +1,5 @@
+import type { Params } from "./internal.svelte.js";
+import type { FormValues } from "./types.js";
 
 type TEvent = {
 	target: HTMLElement;
@@ -53,6 +55,23 @@ export const isValidFileSize = (node: HTMLInputElement | undefined, maxFileSizeI
 	return '';
 };
 
+export const resetObject = (target: FormValues, data: Params | undefined = undefined): void => {
+	if (data) {
+		const defaultKeys = Object.keys({ ...data });
+		for (const [key,] of Object.entries(target)) {
+			if (defaultKeys.includes(key)) {
+				target[key] = data[key];
+			} else {
+				delete target[key];
+			}
+		}
+	} else {
+		for (const [key,] of Object.entries(target)) {
+			target[key] = '';
+		}
+	}
+
+}
 
 export const debounce = (func: (...args?: any) => any, delay: number = 1000) => {
 	let timeoutId: ReturnType<typeof setTimeout>;
