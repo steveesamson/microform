@@ -1,6 +1,6 @@
 {
 	"name": "@steveesamson/microform",
-	"version": "1.0.11",
+	"version": "1.0.9",
 	"scripts": {
 		"dev": "vite dev",
 		"postbuild": "touch ./docs/.nojekyll",

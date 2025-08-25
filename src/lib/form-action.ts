@@ -1,3 +1,4 @@
+import { type Writable, get } from 'svelte/store';
 import { useValidator } from './form-validators.js';
 import { getEditableContent } from './utils.js';
 import type {
@@ -5,15 +6,13 @@ import type {
 	FieldType,
 	FormOptions,
 	InputType,
+	FormReturn,
 	FormAction,
 	ValidateArgs,
-	ValidatorKey,
-	FormValues,
-	FormErrors,
-	FormSanity
+	ValidatorKey
 } from './types.js';
 
-import type { Params } from './internal.svelte.js';
+import type { Params } from './internal.js';
 
 const isField = (node: unknown): node is FieldType => {
 	return (
@@ -35,20 +34,21 @@ const isRadio = (node: unknown) => {
 };
 
 const checkFormFitness = (
-	values: FormValues,
+	values: Writable<Params>,
 	validationMap: Params,
 	validate: (vargs: ValidateArgs) => Promise<void>
 ) => {
+	const _values = get(values);
 	for (const [name, { validations }] of Object.entries(validationMap)) {
-		validate({ name, value: values[name], validations });
+		validate({ name, value: _values[name], validations });
 	}
 };
 
 export const formAction = (
-	values: FormValues,
-	errors: FormErrors,
-	unfits: FormErrors,
-	sanity: FormSanity,
+	values: Writable<Params>,
+	errors: Writable<Params>,
+	unfits: Writable<Params>,
+	isdirty: Writable<boolean>,
 	options: FormOptions,
 	validationMap: Params
 ): FormAction => {
@@ -62,9 +62,7 @@ export const formAction = (
 		}
 	}
 
-	const hasError = (next: string) => !!next;
-
-	return (node: HTMLElement, eventProps?: ActionOptions) => {
+	return (node: HTMLElement, eventProps?: ActionOptions): FormReturn => {
 		const nodeName = isField(node) ? node.name : '';
 		const { name: dsname = nodeName } = node.dataset || {};
 		const {
@@ -75,7 +73,7 @@ export const formAction = (
 		} = eventProps || {};
 		validationMap[name] = { validations, html, nodeRef: node };
 
-		const storedValue = values[name] || '';
+		const storedValue = get(values)[name] || '';
 		let defValue = storedValue;
 
 		if (isField(node) && !isExcluded(node)) {
@@ -85,48 +83,62 @@ export const formAction = (
 			defValue = node.innerHTML || storedValue;
 			node.innerHTML = defValue;
 		}
-		values[name] = defValue;
+
+		values.update((data: Params) => {
+			return { ...data, [name]: defValue };
+		});
+
+		let unsubscribe: () => void;
 
 		const updateNode = (e: Event) => {
+			if (!unsubscribe) {
+				unsubscribe = values.subscribe((data: Params) => {
+					validate({ name, value: data[name], validations, node });
+				});
+			}
+
 			if (isField(node) && !isExcluded(node)) {
 				const value = (e.target as InputType).value || '';
-				values[name] = value;
+				values.update((data: Params) => {
+					return { ...data, [name]: value };
+				});
 			} else if (node.isContentEditable) {
 				const { value: htm, text } = getEditableContent({ target: node }, html);
-				values[name] = htm;
-				values[`${name}-text`] = text;
+				values.update((data: Params) => {
+					return { ...data, [name]: htm, [`${name}-text`]: text };
+				});
 			} else if (isCheckbox(node)) {
 				const { checked, value: val } = node as HTMLInputElement;
-				const fieldValue: string = String(values[name] ?? '');
-				let current = fieldValue?.split(',');
+				const { [name]: fieldValue } = get(values);
+				let current = fieldValue.split(',');
 				if (checked) {
 					current.push(val);
 				} else {
 					current = current.filter((next: string) => next !== val);
 				}
-				values[name] = [...new Set(current)].join(',');
+				values.update((data: Params) => {
+					return { ...data, [name]: [...new Set(current)].join(',') };
+				});
 			} else if (isRadio(node)) {
 				const { value: fvalue } = node as HTMLInputElement;
-				values[name] = fvalue;
+				values.update((data: Params) => {
+					return { ...data, [name]: fvalue };
+				});
 			}
 
-			validate({ name, value: values[name], validations, node });
-		};
-
-
-		$effect(() => {
 			const { validate: validateUnfit } = useValidator(unfits, values, validators);
-			checkFormFitness(values, validationMap, validateUnfit);
-			const withErrors = Object.values(errors).some(hasError);
-			const withUnfits = Object.values(unfits).some(hasError);
-			sanity.ok = !withErrors && !withUnfits;
-		})
 
-		$effect(() => {
-			node.addEventListener(validateEvent, updateNode);
-			return () => {
+			checkFormFitness(values, validationMap, validateUnfit);
+
+			isdirty.set(true);
+		};
+		node.addEventListener(validateEvent, updateNode);
+
+		return {
+			destroy() {
+				unsubscribe?.();
 				node.removeEventListener(validateEvent, updateNode);
 			}
-		})
+		};
 	};
 };
