@@ -41,6 +41,11 @@ const { form, values, errors, submit, sanity } = uform({
         validateEvent:'blur',
         // Configure validators here
         validators:{}
+		// Configurable wait time in millis for form field
+		// to initialize; default is 200 millis - needed for more involving fields.
+		fieldWaitTimeInMilliSecond: 200
+		// Default false, set to true to know if changes are happening.
+		debug: false
     }
 });
 
