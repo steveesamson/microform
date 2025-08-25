@@ -1,6 +1,6 @@
 <script lang="ts">
 	import uform from '$lib/index.js';
-	import type { Params } from '$lib/internal.svelte.js';
+	import type { Params } from '$lib/internal.js';
 
 	let { form, values, sanity, errors, submit, reset } = uform({
 		data: {
@@ -86,7 +86,6 @@
 			<select
 				name="gender"
 				id="gender"
-				value={values['gender']}
 				use:form={{ validateEvent: 'change', validations: ['required'] }}
 			>
 				<option value="">Select gender</option>
@@ -179,12 +178,6 @@
 		</label>
 		<section>
 			<button type="submit" disabled={!sanity.ok}>Submit</button>
-			<button
-				type="button"
-				onclick={() => {
-					values['gender'] = values['gender'] === 'M' ? 'F' : 'M';
-				}}>Toggle gender</button
-			>
 			<button type="button" onclick={reset}> Reset </button>
 		</section>
 	</div>
@@ -240,15 +233,11 @@
 	}
 
 	button[type='submit'] {
-		color: white;
+		color: tomato;
 		border-color: tomato;
-		background-color: tomato;
 	}
 
-	button[type='submit']:disabled {
-		border: 1px solid #ddd;
-		background-color: #efefef;
-		color: #888;
+	button:disabled {
 		filter: brightness(85%);
 		cursor: not-allowed;
 	}
