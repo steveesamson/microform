@@ -91,7 +91,7 @@ export const formAction = (
 		const {
 			name = dsname,
 			validations = [],
-			validateEvent = (options.validateEvent = 'blur'),
+			validateEvent = options.validateEvent,
 			html = false
 		} = eventProps || {};
 		validationMap[name] = { validations, html, nodeRef: node };
@@ -134,11 +134,10 @@ export const formAction = (
 			validate({ name, value: values[name], validations, node });
 		};
 
-
 		$effect(() => {
-			node.addEventListener(validateEvent, updateNode);
+			node.addEventListener(validateEvent!, updateNode);
 			return () => {
-				node.removeEventListener(validateEvent, updateNode);
+				node.removeEventListener(validateEvent!, updateNode);
 			}
 		})
 	};
