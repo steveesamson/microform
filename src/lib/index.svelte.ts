@@ -12,7 +12,6 @@ import { formAction } from './form-action.svelte.js';
 
 const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
 	// form default values
-	// const data = props?.data || {};
 	const defaultOptions: FormOptions = {
 		validateEvent: 'blur',
 		validators: {} as ValidatorMap<ValidatorType>,
@@ -21,7 +20,6 @@ const microform: Microform = (props?: MicroFormProps): MicroFormReturn => {
 	}
 	const { options: userOptions = {}, data = {} } = props || {};
 	const options: FormOptions = { ...defaultOptions, ...userOptions };
-
 	// form state
 	const { values, errors, unfits, reset, sanity, validationMap } = formStore(data);
 
