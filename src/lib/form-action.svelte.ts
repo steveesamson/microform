@@ -1,3 +1,4 @@
+import { onMount } from 'svelte';
 import { useValidator } from './form-validators.js';
 import { debounce, getEditableContent } from './utils.js';
 import type {
@@ -134,7 +135,7 @@ export const formAction = (
 			validate({ name, value: values[name], validations, node });
 		};
 
-		$effect(() => {
+		onMount(() => {
 			node.addEventListener(validateEvent!, updateNode);
 			return () => {
 				node.removeEventListener(validateEvent!, updateNode);
