@@ -11,6 +11,7 @@ export const getEditableContent = (e: TEvent, isHtml: boolean) => {
 		return { text, value: text };
 	}
 	if (!text) {
+		 el.innerHTML = '';
 		return { value: '', text };
 	}
 
@@ -73,9 +74,9 @@ export const resetObject = (target: FormValues, data: Params | undefined = undef
 
 }
 
-export const debounce = (func: (...args?: any) => any, delay: number = 1000) => {
+export const debounce = (func: (...args: any[]) => any, delay: number = 1000) => {
 	let timeoutId: ReturnType<typeof setTimeout>;
-	return function (...par?: any) {
+	return function (...par: any[]) {
 		const context = this;
 		clearTimeout(timeoutId);
 		timeoutId = setTimeout(() => func.apply(context, par), delay);
